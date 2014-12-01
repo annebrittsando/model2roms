@@ -17,9 +17,9 @@ except ImportError:
 __author__ = 'Trond Kristiansen'
 __email__ = 'trond.kristiansen@imr.no'
 __created__ = datetime(2008, 8, 15)
-__modified__ = datetime(2014, 7, 15)
+__modified__ = datetime(2014, 12, 1)
 __version__ = "1.5"
-__status__ = "Development, modified on 15.08.2008,01.10.2009,07.01.2010, 15.07.2014"
+__status__ = "Development, modified on 15.08.2008,01.10.2009,07.01.2010, 15.07.2014, 01.12.2014"
 
 
 def VerticalInterpolation(myvar, array1, array2, grdROMS, grdMODEL):
@@ -278,7 +278,7 @@ def getGLORYSfilename(year, ID, myvar, dataPath):
         myvar = "2D"
     else:
         myvarPrefix = 'grid'+str(myvar.upper())
-    print myvar, myvarPrefix, year, ID, dataPath
+
     # GLORYS change the name in the middle of the time-series (on December 2010) and we have to
     # account for that
     if (year >= 2010 and ID == 12) or ( year >= 2011 ):
@@ -318,8 +318,6 @@ def getNORESMfilename(year, ID, myvar, dataPath):
                 filename = dataPath + 'OCN/NRCP45AERCN_f19_g16_CLE_01.micom.hm.'+str(year)+'-0'+str(ID)+'.nc'
             else:
                 filename = dataPath + 'OCN/NRCP45AERCN_f19_g16_CLE_01.micom.hm.'+str(year)+'-'+str(ID)+'.nc'
-
-    print filename
 
     return filename
 
@@ -740,7 +738,6 @@ def convertMODEL2ROMS(years, allIDS, climName, initName, dataPath, romsgridpath,
                 IDS = [i+1 for i in xrange(12)]
 
         for ID in IDS:
-
             if mytype == 'SODA':
                 filename = getSODAfilename(year, ID, None, dataPath)
 

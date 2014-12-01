@@ -64,7 +64,7 @@ def main():
     # each time run
     decimateGrid = False
     # Write ice values to file (for Arctic regions)
-    writeIce = True
+    writeIce = False
     # Use ESMF for the interpolation. This requires that you have ESMF and ESMPy installed (import ESMF)
     useESMF = True
     # Apply filter to smooth the 2D fields after interpolation (time consuming)
@@ -82,9 +82,10 @@ def main():
     mytype = 'GLORYS'
 
     # Define what grid type you wnat to interpolate to:
-    gridtype = "NS8KM"
+    gridtype  = "NS8KM"
     #gridtype = "REGSCEN"
     #gridtype = "GREENLAND"
+    gridtype  = "KINO"
 
     # Define the paths to the input data
     if mytype == 'SODA':
@@ -106,6 +107,9 @@ def main():
         romsgridpath = "/Users/trondkr/Projects/is4dvar/Grid/nordsjoen_8km_grid_hmax20m_v3.nc"
         romsgridpath = "/work/users/trondk/NS8km/FORCING/GRID/nordsjoen_8km_grid_hmax20m_v3.nc"
 
+    if gridtype == "KINO":
+        romsgridpath = "/work/users/trondk/KINO/GRID/kino_norseas_800m_grid.nc"
+
     if gridtype == "REGSCEN":
         romsgridpath = "/Users/trondkr/Projects/RegScen/Grid/AA_10km_grid_noest.nc"
         romsgridpath = "/Users/trondkr/Projects/is4dvar/Grid/nordsjoen_8km_grid_hmax20m_v3.nc"
@@ -119,7 +123,7 @@ def main():
 
     # Define the period to create forcing for
     start_year  = 2009
-    end_year    = 2012
+    end_year    = 2010
     start_month = 11
     end_month   = 12
 
@@ -132,7 +136,7 @@ def main():
         abbreviation = "nordsjoen_8km"
         minLat = 40
         maxLat = 70
-        minLon = -20
+        minLon = -30
         maxLon = 40
 
     if gridtype == "REGSCEN":
@@ -199,7 +203,6 @@ def main():
         # Compile the Fortran 90 files to Python modules
         import compile
         compile.compileAll()
-
 
     years = [(int(startdate.year) + kk) for kk in range(1 + int(enddate.year) - int(startdate.year))]
     IDS=[]

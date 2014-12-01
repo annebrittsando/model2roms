@@ -34,6 +34,15 @@ def contourMap(grdROMS, tlon, tlat, mydata, depthlevel, var):
                       resolution='i',projection='tmerc',lon_0=0,lat_0=50,area_thresh=20.)
         levels = np.arange(-2.0, 20.0, 0.5)
 
+    if grdROMS.grdName=='KINO':
+         map = Basemap(llcrnrlon=-18.0,
+                      llcrnrlat=46.0,
+                      urcrnrlon=25.5,
+                      urcrnrlat=67.5,
+                      resolution='i',projection='tmerc',lon_0=0,lat_0=50,area_thresh=50.)
+        levels = np.arange(-2.0, 20.0, 0.5)
+
+
     if grdROMS.grdName=='NA':
         map = Basemap(lon_0=25,boundinglat=0,
                 resolution='l',area_thresh=2000.,projection='npstere')

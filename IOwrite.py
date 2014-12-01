@@ -473,12 +473,9 @@ def writeClimFile(grdROMS, ntime, outfilename, myvar, isClimatology, writeIce, m
 
         if myvar=='vice':
             data1 = np.where(abs(data1)>120,0,data1)
-            print "SHAPE of VICE", np.shape(data1), np.shape(grdROMS.lon_v)
-            print "VICE:",np.min(data1*0.01),np.max(data1*0.01),np.mean(data1*0.01),myvar
             f1.variables['vice'][ntime, :, :] = data1*0.01 # NorESM is cm/s divide by 100 to get m/s
         if myvar=='aice':
             data1 = np.where(abs(data1)>120,0,data1)
-            print "AICE:",np.min(data1*0.01),np.max(data1*0.01),np.mean(data1*0.01),myvar
             f1.variables['aice'][ntime, :, :] = data1*0.01 #NorESM is % divide by 100 to get fraction
         if myvar=='hice':
             data1 = np.where(abs(data1)>10,0,data1)
