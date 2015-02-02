@@ -26,7 +26,7 @@ __status__   = "Development"
 
 class grdClass:
 
-    def __init__(self,grdfilename,type,name,useESMF):
+    def __init__(self,grdfilename,type,name,useESMF,realm):
         """
         The object is initialised and created through the __init__ method
         As an example of how to use, these lines return a grid object called grdTEST:
@@ -38,6 +38,7 @@ class grdClass:
         self.type=type
         self.grdName=name
         self.useESMF=useESMF
+        self.realm=realm
 
         self.openNetCDF()
         self.createObject()
@@ -152,10 +153,17 @@ class grdClass:
         if self.type=='NORESM':
             self.grdType  = 'regular'
             print '---> Assuming %s grid type for %s'%(self.grdType,self.type)
-            self.lon = self.cdf.variables["plon"][:]
-            self.lat = self.cdf.variables["plat"][:]
-            self.lonName='plon'
-            self.latName='plat'
+            if self.realm=="ocean":
+                self.lon = self.cdf.variables["plon"][:]
+                self.lat = self.cdf.variables["plat"][:]
+                self.lonName='plon'
+                self.latName='plat'
+            if self.realm=="atmos":
+                self.lon = self.cdf.variables["lon"][:]
+                self.lat = self.cdf.variables["lat"][:]
+                self.lonName='lon'
+                self.latName='lat'
+            
             self.fieldSrc='NaN'
             self.fieldDst_rho='NaN'
             self.fieldDst_u='NaN'
@@ -234,11 +242,12 @@ class grdClass:
             (https://www.myroms.org/forum/viewtopic.php?f=23&t=1254&hilit=critical+depth+tcline&sid=ec98a9e63e7857e2615b9182af752cde)
             the value of Tcline should now be equal to hc"""
 
-            self.vstretching=2
-            self.Nlevels=40
-            self.theta_s=7.0
-            self.theta_b=0.0
-            self.Tcline=250.0
+            self.vstretching=4
+            self.vtransform=2
+            self.Nlevels=35
+            self.theta_s=5.0
+            self.theta_b=0.4
+            self.Tcline=20.0
             self.hc=20.0
             self.vars=[]
             self.lonName='lon_rho'
@@ -314,14 +323,14 @@ class grdClass:
                     self.lon_u, self.lat_u = np.meshgrid(self.lon_u,self.lat_u)
                     self.lon_v, self.lat_v = np.meshgrid(self.lon_v,self.lat_v)
 
+            """Calculate the vertical stretching and transform functions"""
             IOverticalGrid.calculate_z_r(self)
-
             IOverticalGrid.calculate_z_w(self)
 
             if (self.useESMF):
-
+                print self.grdfilename
                 self.esmfgrid_u = ESMF.Grid(filename=self.grdfilename, filetype=ESMF.FileFormat.GRIDSPEC,
-                                      is_sphere=True, coord_names=['lon_u','lat_u'], add_mask=False)
+                                       coord_names=['lon_u','lat_u'], add_mask=False)
                 self.esmfgrid_v = ESMF.Grid(filename=self.grdfilename, filetype=ESMF.FileFormat.GRIDSPEC,
                                       is_sphere=True, coord_names=['lon_v','lat_v'], add_mask=False)
 

@@ -688,8 +688,8 @@ def convertMODEL2ROMS(years, allIDS, climName, initName, dataPath, romsgridpath,
     # MODEL data already at Z-levels. No need to interpolate to fixed depths,
     # but we use the one we have
 
-    grdMODEL = grd.grdClass(fileNameIn, mytype, mytype, useESMF)
-    grdROMS = grd.grdClass(romsgridpath, "ROMS", gridtype, useESMF)
+    grdMODEL = grd.grdClass(fileNameIn, mytype, mytype, useESMF,"ocean")
+    grdROMS = grd.grdClass(romsgridpath, "ROMS", gridtype, useESMF,"ocean")
     grdROMS.myvars = myvars
     if (useESMF):
         print "\nCreating the interpolation weights and indexes using ESMF:"

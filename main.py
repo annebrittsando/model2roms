@@ -6,12 +6,12 @@ import clim2bry
 import DecimateGrid
 import grd
 import numpy as np
-
+import atmosForcing
 
 __author__ = 'Trond Kristiansen'
 __email__ = 'trond.kristiansen@imr.no'
 __created__ = datetime(2009, 1, 30)
-__modified__ = datetime(2014, 10, 23)
+__modified__ = datetime(2014, 12, 16)
 __version__ = "1.5"
 __status__ = "Development"
 
@@ -59,7 +59,9 @@ def main():
         latlist = [54.5601, 63.7010, 60.4201, 67.5001, 41.6423]
 
     # Create the bry, init, and clim files for a given grid and input data
-    createForcing = True
+    createOceanForcing = True
+    # Create atmospheric forcing for the given grid
+    createAtmosForcing = False
     # Create a smaller resolution grid based on your original. Decimates every second for
     # each time run
     decimateGrid = False
@@ -85,7 +87,7 @@ def main():
     gridtype  = "NS8KM"
     #gridtype = "REGSCEN"
     #gridtype = "GREENLAND"
-    gridtype  = "KINO"
+    #gridtype  = "KINO"
 
     # Define the paths to the input data
     if mytype == 'SODA':
@@ -95,25 +97,29 @@ def main():
     if mytype == 'GLORYS':
         modelpath = "/Volumes/MacintoshHD2/Datasets/GLOBAL_REANALYSIS_PHYS_001_009/"
         modelpath = "/Users/trondkr/Projects/is4dvar/GLORYS2V3/"
-        modelpath = "/work/users/trondk/GLORYS2V3/"
+    #    modelpath = "/work/users/trondk/GLORYS2V3/"
     if mytype == 'NORESM':
         modelpath = "/Users/trondkr/Projects/RegScen/NRCP45AERCN_f19_g16_CLE_01/"
-        modelpath = "/work/users/trondk/REGSCEN/NRCP45AERCN_f19_g16_CLE_01/"
+        #modelpath = "/work/users/trondk/REGSCEN/NRCP45AERCN_f19_g16_CLE_01/"
+        if createAtmosForcing:
+            atmospath = "/Users/trondkr/Projects/RegScen/model2roms/TESTFILES/"
+        
     if mytype == 'WOAMONTHLY':
         modelpath = "/Users/trondkr/Projects/is4dvar/createSSS/"
 
     # Define the path to the grid file
     if gridtype == "NS8KM":
-        romsgridpath = "/Users/trondkr/Projects/is4dvar/Grid/nordsjoen_8km_grid_hmax20m_v3.nc"
-        romsgridpath = "/work/users/trondk/NS8km/FORCING/GRID/nordsjoen_8km_grid_hmax20m_v3.nc"
+        romsgridpath = "/Users/trondkr/Projects/is4dvar/Grid/nordsjoen_8km_smoothed02022015.nc"
+        #romsgridpath = "/work/users/trondk/NS8km/FORCING/GRID/nordsjoen_8km_grid_hmax20m_v3.nc"
 
     if gridtype == "KINO":
         romsgridpath = "/work/users/trondk/KINO/GRID/kino_norseas_800m_grid.nc"
+        romsgridpath="/Users/trondkr/Projects/KINO/GRID/kino_norseas_800m_grid.nc"
 
     if gridtype == "REGSCEN":
         romsgridpath = "/Users/trondkr/Projects/RegScen/Grid/AA_10km_grid_noest.nc"
-        romsgridpath = "/Users/trondkr/Projects/is4dvar/Grid/nordsjoen_8km_grid_hmax20m_v3.nc"
-        romsgridpath = "/work/users/trondk/REGSCEN/GRID/AA_10km_grid_noest.nc"
+        #romsgridpath = "/Users/trondkr/Projects/is4dvar/Grid/nordsjoen_8km_grid_hmax20m_v3.nc"
+        #romsgridpath = "/work/users/trondk/REGSCEN/GRID/AA_10km_grid_noest.nc"
 
     if gridtype == "GREENLAND":
         romsgridpath="/Users/trondkr/Projects/RegScen/Grid/Sermilik_grid_4000m.nc"
@@ -123,7 +129,7 @@ def main():
 
     # Define the period to create forcing for
     start_year  = 2009
-    end_year    = 2010
+    end_year    = 2012
     start_month = 11
     end_month   = 12
 
@@ -148,10 +154,18 @@ def main():
 
     if gridtype == "GREENLAND":
         abbreviation = "greenland"
-        minLat = -50
+        minLat = 50
         maxLat = 89.5
         minLon = -179
         maxLon = 180
+
+    if gridtype == "KINO":
+        abbreviation = "kino"
+        minLat = 30
+        maxLat = 70
+        minLon = -40
+        maxLon = 40
+
 
     # Define what and name of variables to include in the forcing files
     # -> myvars is the name model2roms uses to identify variables
@@ -196,8 +210,7 @@ def main():
     initName = abbreviation + '_init_' + str(mytype) + '_' + str(start_year) + '_to_' + str(end_year) + '.nc'
     bryName = abbreviation + '_bry_' + str(mytype) + '_' + str(start_year) + '_to_' + str(end_year) + '.nc'
     if isClimatology is True:
-        climName=abbreviation + '_' + str(mytype) + '_climatology.nc'
-
+        climName=abbreviation + '_' + str(mytype) + '_climatology.nc'  
 
     if compileAll is True:
         # Compile the Fortran 90 files to Python modules
@@ -215,7 +228,7 @@ def main():
         print "Will create climatology for months: %s"%(IDS)
 
     # Create the grid object for the output grid
-    grdROMS = grd.grdClass(romsgridpath, "ROMS", gridtype, useESMF)
+    grdROMS = grd.grdClass(romsgridpath, "ROMS", gridtype, useESMF,'ocean')
     grdROMS.vars=myvars
 
     if (useESMF):
@@ -223,7 +236,7 @@ def main():
         import ESMF
         manager = ESMF.Manager(logkind = ESMF.LogKind.MULTI, debug = True)
 
-    if createForcing:
+    if createOceanForcing:
 
         showInfo(myvars, romsgridpath, climName, initName, bryName, start_year, end_year, isClimatology, useESMF, myformat)
 
@@ -231,6 +244,10 @@ def main():
                                          mytype, gridtype, subset, isClimatology, writeIce, useESMF, useFilter, myformat)
 
         clim2bry.writeBry(grdROMS, start_year, bryName, climName, writeIce, mytype, myformat)
+
+    if createAtmosForcing:
+        atmosForcing.createAtmosFileUV(grdROMS,modelpath,atmospath,startdate,enddate,useESMF,
+            myformat,abbreviation,mytype,gridtype,show_progress)
 
     if decimateGrid:
         DecimateGrid.createGrid(grdROMS, '/Users/trond/Projects/arcwarm/SODA/soda2roms/imr_nordic_8km.nc', 2)

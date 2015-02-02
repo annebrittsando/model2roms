@@ -29,7 +29,7 @@ def calculate_z_w(self):
     (zeta varies), and also position dependent since the bottom matrix varies.
     Results are stored in array z[eta_rho, xi_rho, s]
 
-    Trond Kristiansen, 20.01.2008, 03.12.2008, 09.12.2008, 11.11.2009
+    Trond Kristiansen, 20.01.2008, 03.12.2008, 09.12.2008, 11.11.2009, 02.02.2015
     """
     sc_w=np.zeros((self.Nlevels+1),np.float64)
     Cs_w=np.zeros((self.Nlevels+1),np.float64)
@@ -94,16 +94,31 @@ def calculate_z_w(self):
             if k==self.Nlevels:
                 Cs_w[k]=-1
 
+        if self.vstretching==4:
+            """
+            A. Shchepetkin (2010) UCLA-ROMS current function
+            https://www.myroms.org/wiki/index.php/Vertical_S-coordinate
+            """
+            if (self.theta_s > 0):
+                Csur = (1.0 - np.cosh(self.theta_s * sc_w[k])) / (np.cosh(self.theta_s) - 1.0)
+            else:
+                Csur = -sc_w[k]**2
+
+            if (self.theta_b > 0):
+                Cbot = (np.exp(self.theta_b * Csur) - 1.0 ) / (1.0 - np.exp(-self.theta_b))
+                Cs_w[k] = Cbot
+            else:
+                Cs_w[k] = Csur         
+           
 
     zeta=None
 
     for k in xrange(len(sc_w)):
-        if self.vstretching==1:
+        if self.vtransform==1:
             z_w[k,:,:] =np.multiply(sc_w[k],hc) + np.subtract(h,hc)*Cs_w[k]
            
-            
-        if self.vstretching==2:
-            z_w[k,:,:] =np.multiply(sc_w[k],hc) + np.subtract(h,hc)*Cs_w[k]
+        if self.vtransform==2 or self.vtrans==4:
+            z_w[k,:,:] = (hc * sc_w[k] + h * Cs_w[k]) / (hc + h)
     
     self.z_w = z_w * self.mask_rho
     self.Cs_w=Cs_w
@@ -150,7 +165,7 @@ def calculate_z_r(self):
                 Cs_r[k]=0
             if k==self.Nlevels-1:
                 Cs_r[k]=-1
-
+        
         if self.vstretching==2:
             """
             A. Shchepetkin new vertical stretching function.
@@ -180,18 +195,31 @@ def calculate_z_r(self):
             if k==self.Nlevels-1:
                 Cs_r[k]=-1
 
-    """
-    TODO: FIXME hardcode variables should be read from file
-    """
+        if self.vstretching==4:
+            """
+            A. Shchepetkin (2010) UCLA-ROMS current function
+            https://www.myroms.org/wiki/index.php/Vertical_S-coordinate
+            """
+            if (self.theta_s > 0):
+                Csur = (1.0 - np.cosh(self.theta_s * sc_r[k])) / (np.cosh(self.theta_s) - 1.0)
+            else:
+                Csur = -sc_r[k]**2
+
+            if (self.theta_b > 0):
+                Cbot = (np.exp(self.theta_b * Csur) - 1.0 ) / (1.0 - np.exp(-self.theta_b))
+                Cs_r[k] = Cbot
+            else:
+                Cs_r[k] = Csur         
+   
     zeta=None
 
     for k in xrange(len(sc_r)):
-        if self.vstretching==1:
+        if self.vtransform==1:
             z_r[k,:,:] =np.multiply(sc_r[k],hc) + np.subtract(h,hc)*Cs_r[k]
-        
-        if self.vstretching==2:
-            z_r[k,:,:] =np.multiply(sc_r[k],hc) + np.subtract(h,hc)*Cs_r[k]
-
+           
+        if self.vtransform==2 or self.vtrans==4:
+            z_r[k,:,:] = (hc * sc_r[k] + h * Cs_r[k]) / (hc + h)
+    
     self.z_r = z_r * self.mask_rho
     self.Cs_rho=Cs_r
     self.s_rho=sc_r
