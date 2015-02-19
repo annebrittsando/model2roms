@@ -253,11 +253,11 @@ def getTime(cdf, grdROMS, grdMODEL, year, ID, mytime, mytype, firstRun):
         mycalendar = cdf.variables["time"].calendar
         myunits = cdf.variables["time"].units
         # Fake the start date first time around
-        if (firstRun):
-            currentdate = datetime(2006,1,1)
-            print "NOTICE!\n First datestamp in result files are hardcoded to %s"%(currentdate)
-        else:
-            currentdate = num2date(mydays, units=myunits, calendar=mycalendar)
+       # if (firstRun):
+       #     currentdate = datetime(2006,1,1)
+       #     print "NOTICE!\n First datestamp in result files are hardcoded to %s"%(currentdate)
+       # else:
+        currentdate = num2date(mydays, units=myunits, calendar=mycalendar)
         jd = date2num(currentdate, myunits, calendar='noleap')
 
     grdROMS.time = (jd - jdref)
@@ -306,18 +306,15 @@ def getNORESMfilename(year, ID, myvar, dataPath):
     if (myvar=='grid'):
         filename = dataPath + 'GRID/NorESM.nc'
         #TODO: Fix this hardcoding of grid path
-        #filename = "/work/users/trondk/REGSCEN/GRID/NorESM.nc"
+        filename = "/work/users/trondk/REGSCEN/GRID/NorESM.nc"
     else:
         if myvar in ['iage', 'uvel', 'vvel', 'aice', 'hi', 'hs']:
-            if (ID < 10):
-                filename = dataPath + 'ICE/NRCP45AERCN_f19_g16_CLE_01.cice.h.'+str(year)+'-0'+str(ID)+'.nc'
-            else:
-                filename = dataPath + 'ICE/NRCP45AERCN_f19_g16_CLE_01.cice.h.'+str(year)+'-'+str(ID)+'.nc'
+            filename = dataPath + 'ICE/N20TRAERCN_f19_g16_PARADIGM.cice.h.'+str(year)+'.nc'
         else:
             if (ID < 10):
-                filename = dataPath + 'OCN/NRCP45AERCN_f19_g16_CLE_01.micom.hm.'+str(year)+'-0'+str(ID)+'.nc'
+                filename = dataPath + 'OCN/N20TRAERCN_f19_g16_PARADIGM.micom.hm.'+str(year)+'-0'+str(ID)+'.nc'
             else:
-                filename = dataPath + 'OCN/NRCP45AERCN_f19_g16_CLE_01.micom.hm.'+str(year)+'-'+str(ID)+'.nc'
+                filename = dataPath + 'OCN/N20TRAERCN_f19_g16_PARADIGM.micom.hm.'+str(year)+'-'+str(ID)+'.nc'
 
     return filename
 
@@ -567,7 +564,11 @@ def get2Ddata(grdROMS, grdMODEL, myvar, mytype, year, ID, varNames, dataPath):
         if mytype == "NORESM":
             cdf = Dataset(getNORESMfilename(year, ID, varNames[varN], dataPath))
             #myunits = cdf.variables[str(varNames[varN])].units
-            data = np.squeeze(cdf.variables[str(varNames[varN])][0, :,:])
+            # For NORESM data are 12 months of data stored in ice files. Use ID as month indicator to get data.
+            if myvar in ['ageice','uice','vice','aice','hice','snow_thick']:
+                data = np.squeeze(cdf.variables[str(varNames[varN])][ID-1, :,:])
+            else:
+                data = np.squeeze(cdf.variables[str(varNames[varN])][0, :,:])
             data=np.where(data.mask,grdROMS.fill_value,data)
 
         if mytype == "GLORYS":
@@ -614,10 +615,18 @@ def get2Ddata(grdROMS, grdMODEL, myvar, mytype, year, ID, varNames, dataPath):
             if mytype == "NORESM":
                 cdf = Dataset(getNORESMfilename(year, ID, varNames[varN], dataPath))
 
-                data1 = np.squeeze(cdf.variables[str(varNames[varN])][0,
+                if myvar in ['ageice','uice','vice','aice','hice','snow_thick']:
+                    data1 = np.squeeze(cdf.variables[str(varNames[varN])][ID-1,
                                    int(grdMODEL.indices[0, 2]):int(grdMODEL.indices[0, 3]),
                                    int(grdMODEL.indices[0, 0]):int(grdMODEL.indices[0, 1])])
-                data2 = np.squeeze(cdf.variables[str(varNames[varN])][0,
+                    data2 = np.squeeze(cdf.variables[str(varNames[varN])][ID-1,
+                                   int(grdMODEL.indices[1, 2]):int(grdMODEL.indices[1, 3]),
+                                   int(grdMODEL.indices[1, 0]):int(grdMODEL.indices[1, 1])])
+                else:
+                    data1 = np.squeeze(cdf.variables[str(varNames[varN])][0,
+                                   int(grdMODEL.indices[0, 2]):int(grdMODEL.indices[0, 3]),
+                                   int(grdMODEL.indices[0, 0]):int(grdMODEL.indices[0, 1])])
+                    data2 = np.squeeze(cdf.variables[str(varNames[varN])][0,
                                    int(grdMODEL.indices[1, 2]):int(grdMODEL.indices[1, 3]),
                                    int(grdMODEL.indices[1, 0]):int(grdMODEL.indices[1, 1])])
 
@@ -651,7 +660,12 @@ def get2Ddata(grdROMS, grdMODEL, myvar, mytype, year, ID, varNames, dataPath):
             if mytype == "NORESM":
                 cdf = Dataset(getNORESMfilename(year, ID, varNames[varN], dataPath))
 
-                data = np.squeeze(cdf.variables[str(varNames[varN])][0,
+                if myvar in ['ageice','uice','vice','aice','hice','snow_thick']:
+                    data = np.squeeze(cdf.variables[str(varNames[varN])][ID-1,
+                                  int(grdMODEL.indices[0, 2]):int(grdMODEL.indices[0, 3]),
+                                  int(grdMODEL.indices[0, 0]):int(grdMODEL.indices[0, 1])])
+                else:
+                    data = np.squeeze(cdf.variables[str(varNames[varN])][0,
                                   int(grdMODEL.indices[0, 2]):int(grdMODEL.indices[0, 3]),
                                   int(grdMODEL.indices[0, 0]):int(grdMODEL.indices[0, 1])])
 

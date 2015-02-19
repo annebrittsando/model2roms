@@ -117,7 +117,7 @@ def calculate_z_w(self):
         if self.vtransform==1:
             z_w[k,:,:] =np.multiply(sc_w[k],hc) + np.subtract(h,hc)*Cs_w[k]
            
-        if self.vtransform==2 or self.vtrans==4:
+        if self.vtransform==2 or self.vtransform==4:
             z_w[k,:,:] = (hc * sc_w[k] + h * Cs_w[k]) / (hc + h)
     
     self.z_w = z_w * self.mask_rho
@@ -217,7 +217,7 @@ def calculate_z_r(self):
         if self.vtransform==1:
             z_r[k,:,:] =np.multiply(sc_r[k],hc) + np.subtract(h,hc)*Cs_r[k]
            
-        if self.vtransform==2 or self.vtrans==4:
+        if self.vtransform==2 or self.vtransform==4:
             z_r[k,:,:] = (hc * sc_r[k] + h * Cs_r[k]) / (hc + h)
     
     self.z_r = z_r * self.mask_rho

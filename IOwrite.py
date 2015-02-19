@@ -143,10 +143,10 @@ def writeClimFile(grdROMS, ntime, outfilename, myvar, isClimatology, writeIce, m
         vnc.long_name = "S-coordinate at RHO-points"
         vnc.valid_min = -1.
         vnc.valid_max = 0.
-        if grdROMS.vstretching == 2:
+        if grdROMS.vtransform == 2:
             vnc.standard_name = "ocean_s_coordinate_g2"
             vnc.formula_terms = "s: s_rho C: Cs_r eta: zeta depth: h depth_c: hc"
-        if grdROMS.vstretching == 1:
+        if grdROMS.vtransform == 1:
             vnc.standard_name = "ocean_s_coordinate_g1"
             vnc.formula_terms = "s: s_rho C: Cs_r eta: zeta depth: h depth_c: hc"
         vnc.field = "s_rho, scalar"
@@ -156,10 +156,10 @@ def writeClimFile(grdROMS, ntime, outfilename, myvar, isClimatology, writeIce, m
         vnc.long_name = "S-coordinate at W-points"
         vnc.valid_min = -1.
         vnc.valid_max = 0.
-        if grdROMS.vstretching == 2:
+        if grdROMS.vtransform == 2:
             vnc.standard_name = "ocean_s_coordinate_g2"
             vnc.formula_terms = "s: s_w C: Cs_w eta: zeta depth: h depth_c: hc"
-        if grdROMS.vstretching == 1:
+        if grdROMS.vtransform == 1:
             vnc.standard_name = "ocean_s_coordinate_g1"
             vnc.formula_terms = "s: s_w C: Cs_w eta: zeta depth: h depth_c: hc"
         vnc.field = "s_w, scalar"

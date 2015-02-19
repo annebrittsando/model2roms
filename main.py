@@ -66,7 +66,7 @@ def main():
     # each time run
     decimateGrid = False
     # Write ice values to file (for Arctic regions)
-    writeIce = False
+    writeIce = True
     # Use ESMF for the interpolation. This requires that you have ESMF and ESMPy installed (import ESMF)
     useESMF = True
     # Apply filter to smooth the 2D fields after interpolation (time consuming)
@@ -81,11 +81,11 @@ def main():
     mytype = 'SODAMONTHLY'
     mytype = 'WOAMONTHLY'
     mytype = 'NORESM'
-    mytype = 'GLORYS'
+    #mytype = 'GLORYS'
 
     # Define what grid type you wnat to interpolate to:
     gridtype  = "NS8KM"
-    #gridtype = "REGSCEN"
+    gridtype = "REGSCEN"
     #gridtype = "GREENLAND"
     #gridtype  = "KINO"
 
@@ -100,7 +100,8 @@ def main():
     #    modelpath = "/work/users/trondk/GLORYS2V3/"
     if mytype == 'NORESM':
         modelpath = "/Users/trondkr/Projects/RegScen/NRCP45AERCN_f19_g16_CLE_01/"
-        #modelpath = "/work/users/trondk/REGSCEN/NRCP45AERCN_f19_g16_CLE_01/"
+        modelpath = "/work/users/trondk/REGSCEN/NRCP45AERCN_f19_g16_CLE_01/"
+        modelpath = "/work/users/trondk/REGSCEN/N20TRAERCN/"
         if createAtmosForcing:
             atmospath = "/Users/trondkr/Projects/RegScen/model2roms/TESTFILES/"
         
@@ -119,7 +120,7 @@ def main():
     if gridtype == "REGSCEN":
         romsgridpath = "/Users/trondkr/Projects/RegScen/Grid/AA_10km_grid_noest.nc"
         #romsgridpath = "/Users/trondkr/Projects/is4dvar/Grid/nordsjoen_8km_grid_hmax20m_v3.nc"
-        #romsgridpath = "/work/users/trondk/REGSCEN/GRID/AA_10km_grid_noest.nc"
+        romsgridpath = "/work/users/trondk/REGSCEN/GRID/AA_10km_grid_noest.nc"
 
     if gridtype == "GREENLAND":
         romsgridpath="/Users/trondkr/Projects/RegScen/Grid/Sermilik_grid_4000m.nc"
@@ -128,9 +129,9 @@ def main():
     else: isClimatology = False
 
     # Define the period to create forcing for
-    start_year  = 2009
-    end_year    = 2012
-    start_month = 11
+    start_year  = 1950
+    end_year    = 1970
+    start_month = 1
     end_month   = 12
 
     startdate = datetime(start_year, start_month, 1)
