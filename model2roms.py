@@ -270,12 +270,25 @@ def getTime(cdf, grdROMS, grdMODEL, year, ID, mytime, mytype, firstRun):
 def getGLORYSfilename(year, ID, myvar, dataPath):
     # Month indicates month
     # myvar:S,T,U,V
+    print "MYVAR: %s - %s"%(myvar,dataPath)
     if (myvar in ['iicevelu', 'iicevelv', 'ileadfra', 'iicethic']):
         myvarPrefix = 'icemod'
         myvar = "ice"
     elif (myvar in ['sossheig']):
-        myvarPrefix = 'grid2D'
-        myvar = "2D"
+        if (year >= 2010 and ID == 12) or ( year >= 2011 ):
+            myvarPrefix = 'SSH'
+        else:
+            myvarPrefix = 'grid2D'
+        myvar = "ssh"
+    elif (myvar in ['vozocrtx', 'vomecrty']):
+        myvar='u-v'
+        myvarPrefix='gridUV'
+    elif(myvar in ['votemper']):
+        myvar='t'
+        myvarPrefix='gridT'
+    elif(myvar in ['vosaline']):
+        myvar='s'
+        myvarPrefix='gridS'
     else:
         myvarPrefix = 'grid'+str(myvar.upper())
 
@@ -283,10 +296,6 @@ def getGLORYSfilename(year, ID, myvar, dataPath):
     # account for that
     if (year >= 2010 and ID == 12) or ( year >= 2011 ):
         production = "R20140520"
-
-        if str(myvar)=="2D":
-            myvarPrefix = 'SSH'
-            myvar = "2D"
     else:
         production = "R20130808"
 
@@ -378,15 +387,10 @@ def get3Ddata(grdROMS, grdMODEL, myvar, mytype, year, ID, varNames, dataPath):
             print "Data range", np.min(data),np.max(data)
 
         if mytype == "GLORYS":
-            if myvar == 'temperature':
-                cdf = Dataset(getGLORYSfilename(year, ID, 'T', dataPath))
-                myunits = cdf.variables[str(varNames[varN])].units
-
-            if myvar == 'salinity': cdf = Dataset(getGLORYSfilename(year, ID, 'S', dataPath))
-            if myvar in ['uvel','vvel']: cdf = Dataset(getGLORYSfilename(year, ID, 'UV', dataPath))
+            cdf = Dataset(getGLORYSfilename(year, ID, varNames[varN], dataPath))
+            myunits = cdf.variables[str(varNames[varN])].units
             data = np.squeeze(cdf.variables[str(varNames[varN])][0,:,:,:])
             data=np.where(data.mask,grdROMS.fill_value,data)
-
 
         cdf.close()
     else:
@@ -426,13 +430,8 @@ def get3Ddata(grdROMS, grdMODEL, myvar, mytype, year, ID, varNames, dataPath):
                         int(grdMODEL.indices[1, 0]):int(grdMODEL.indices[1, 1])]
 
             if mytype == "GLORYS":
-                if myvar == 'temperature':
-                    cdf = Dataset(getGLORYSfilename(year, ID, 'T', dataPath))
-                    myunits = cdf.variables[str(varNames[varN])].units
-
-                if myvar == 'salinity': cdf = Dataset(getGLORYSfilename(year, ID, 'S', dataPath))
-                if myvar == 'uvel': cdf = Dataset(getGLORYSfilename(year, ID, 'U', dataPath))
-                if myvar == 'vvel': cdf = Dataset(getGLORYSfilename(year, ID, 'V', dataPath))
+                cdf = Dataset(getGLORYSfilename(year, ID, varNames[varN], dataPath))
+                myunits = cdf.variables[str(varNames[varN])].units
 
                 data1 = np.squeeze(cdf.variables[str(varNames[varN])][0, :,
                                    int(grdMODEL.indices[0, 2]):int(grdMODEL.indices[0, 3]),
@@ -651,7 +650,7 @@ def get2Ddata(grdROMS, grdMODEL, myvar, mytype, year, ID, varNames, dataPath):
                        int(grdMODEL.indices[0, 0]):int(grdMODEL.indices[0, 1])]
 
             if mytype == "GLORYS":
-                cdf = Dataset(getGLORYSfilename(year, ID, '2D', dataPath))
+                cdf = Dataset(getGLORYSfilename(year, ID, varNames[varN], dataPath))
 
                 data = np.squeeze(cdf.variables[str(varNames[varN])][0,
                                   int(grdMODEL.indices[0, 2]):int(grdMODEL.indices[0, 3]),

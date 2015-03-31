@@ -33,16 +33,15 @@ Module velocity
             !        II is the total grid points in xi direction
             ! -------------------------------------------------------------------------------------------------------
 
-            double precision rz2, rz1
-            integer eta_rho, xi_rho, II, JJ, ic, jc, kc, kT, Nroms
-            double precision, dimension(Nroms,JJ,II) :: dat
-            double precision, dimension(JJ,II) :: outdat
-            double precision, dimension(Nroms+1,eta_rho,xi_rho) ::  z_w
-            double precision, dimension(Nroms+1,JJ,II) ::  z_wu
+            integer eta_rho, xi_rho, II, JJ, ic, jc, kc, Nroms
+            REAL(4), dimension(Nroms,JJ,II) :: dat
+            REAL(4), dimension(JJ,II) :: outdat
+            REAL(4), dimension(Nroms+1,eta_rho,xi_rho) ::  z_w
+            REAL(4), dimension(Nroms+1,JJ,II) ::  z_wu
 
 !f2py intent(in,overwrite) dat,z_w,z_wu,Nroms, JJ, II, xi_rho, eta_rho
 !f2py intent(in,out,overwrite) outdat
-!f2py intent(hide) ic,jc,kc,kT,rz1,rz2
+!f2py intent(hide) ic,jc,kc
 
             print*,'--->Started ubar calculations'
             ! average z_w to Arakawa-C u,v-points (z_wu, z_wv)
@@ -101,16 +100,15 @@ Module velocity
             !        II is the total grid points in xi direction
             ! -------------------------------------------------------------------------------------------------------
 
-            double precision rz2, rz1
-            integer eta_rho, xi_rho, II, JJ, ic, jc, kc, kT, Nroms
-            double precision, dimension(Nroms,JJ,II) :: dat
-            double precision, dimension(JJ,II) :: outdat
-            double precision, dimension(Nroms+1,eta_rho,xi_rho) ::    z_w
-            double precision, dimension(Nroms+1,JJ,II) ::  z_wv
+            integer eta_rho, xi_rho, II, JJ, ic, jc, kc, Nroms
+            REAL(4), dimension(Nroms,JJ,II) :: dat
+            REAL(4), dimension(JJ,II) :: outdat
+            REAL(4), dimension(Nroms+1,eta_rho,xi_rho) ::    z_w
+            REAL(4), dimension(Nroms+1,JJ,II) ::  z_wv
 
 !f2py intent(in,overwrite) dat, z_w, z_wv, Nroms, JJ, II, xi_rho, eta_rho
 !f2py intent(in,out,overwrite) outdat
-!f2py intent(hide) ic,jc,kc,kT,rz1,rz2
+!f2py intent(hide) ic,jc,kc
 
             print*,'--->Started vbar calculations'
             do jc=2,JJ+1

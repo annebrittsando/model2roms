@@ -49,18 +49,18 @@ Module interpolation
             !        II is the total grid points in xi direction
             ! -------------------------------------------------------------------------------------------------------
             
-            double precision rz2, rz1, fill
-            integer eta_rho, xi_rho, II, JJ, ic, jc, kc, kT, kkT, Nsoda, Nroms, ff
-            double precision, dimension(Nsoda,JJ,II) :: dat
-            double precision, dimension(eta_rho,xi_rho) :: bathymetry
-            double precision, dimension(Nroms,JJ,II) :: outdat
-            double precision, dimension(Nsoda) ::  zs
-            double precision, dimension(Nroms,eta_rho,xi_rho) :: zr
+            REAL(4) rz2, rz1, fill
+            integer eta_rho, xi_rho, II, JJ, ic, jc, kc, kT, kkT, Nsoda, Nroms
+            REAL(4), dimension(Nsoda,JJ,II) :: dat
+            REAL(4), dimension(eta_rho,xi_rho) :: bathymetry
+            REAL(4), dimension(Nroms,JJ,II) :: outdat
+            REAL(4), dimension(Nsoda) ::  zs
+            REAL(4), dimension(Nroms,eta_rho,xi_rho) :: zr
 
 !f2py intent(in,out,overwrite) outdat       
 !f2py intent(in,overwrite) dat, bathymetry, zr, zs
 !f2py intent(in,overwrite) Nroms, Nsoda, JJ, II, xi_rho, eta_rho
-!f2py intent(hide) ic,jc,kc,kT,rz1,rz2, kkT, ff
+!f2py intent(hide) ic,jc,kc,kT,rz1,rz2, kkT
             fill=-10000
            
             do jc=1,JJ
@@ -182,8 +182,8 @@ Module interpolation
           
            
             integer KK, II, JJ, kc, ic, jc, fill
-            double precision, dimension(KK,JJ,II) :: rhodata
-            double precision, dimension(KK,JJ,II-1) :: udata
+            REAL(4), dimension(KK,JJ,II) :: rhodata
+            REAL(4), dimension(KK,JJ,II-1) :: udata
        
 !f2py intent(in,out,overwrite) udata
 !f2py intent(in,overwrite) rhodata, KK, JJ, II
@@ -230,8 +230,8 @@ Module interpolation
             ! -------------------------------------------------------------------------------------------------------
           
            integer KK, II, JJ, kc, ic, jc, fill
-           double precision, dimension(KK,JJ,II) :: rhodata
-           double precision, dimension(KK,JJ-1,II) :: vdata
+           REAL(4), dimension(KK,JJ,II) :: rhodata
+           REAL(4), dimension(KK,JJ-1,II) :: vdata
 
 !f2py intent(in,out,overwrite) vdata
 !f2py intent(in,overwrite) rhodata, KK, JJ, II
@@ -272,9 +272,9 @@ Module interpolation
             ! Rutgers University, NJ.
             ! -------------------------------------------------------------------------------------------------------
             
-           double precision, dimension(KK,JJ,II) :: urot, vrot
-           double precision, dimension(KK,JJ,II) :: u_rho, v_rho
-           double precision, dimension(JJ,II)  :: angle
+           REAL(4), dimension(KK,JJ,II) :: urot, vrot
+           REAL(4), dimension(KK,JJ,II) :: u_rho, v_rho
+           REAL(4), dimension(JJ,II)  :: angle
            integer KK, II, JJ, kc, ic, jc
           
 !f2py intent(in,out,overwrite) urot, vrot

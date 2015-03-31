@@ -44,7 +44,7 @@ def main():
     # EDIT ===================================================================
     # Set show_progress to "False" if you do not want to see the progress
     # indicator for horizontal interpolation.
-    show_progress = True
+    show_progress = False
     # Set compileAll to True if you want automatic re-compilation of all the
     # fortran files necessary to run soda2roms. You need to edit compile.py for this
     compileAll = False
@@ -66,7 +66,7 @@ def main():
     # each time run
     decimateGrid = False
     # Write ice values to file (for Arctic regions)
-    writeIce = True
+    writeIce = False
     # Use ESMF for the interpolation. This requires that you have ESMF and ESMPy installed (import ESMF)
     useESMF = True
     # Apply filter to smooth the 2D fields after interpolation (time consuming)
@@ -81,13 +81,13 @@ def main():
     mytype = 'SODAMONTHLY'
     mytype = 'WOAMONTHLY'
     mytype = 'NORESM'
-    #mytype = 'GLORYS'
+    mytype = 'GLORYS'
 
     # Define what grid type you wnat to interpolate to:
     gridtype  = "NS8KM"
-    gridtype = "REGSCEN"
+#    gridtype = "REGSCEN"
     #gridtype = "GREENLAND"
-    #gridtype  = "KINO"
+    gridtype  = "KINO"
 
     # Define the paths to the input data
     if mytype == 'SODA':
@@ -97,7 +97,7 @@ def main():
     if mytype == 'GLORYS':
         modelpath = "/Volumes/MacintoshHD2/Datasets/GLOBAL_REANALYSIS_PHYS_001_009/"
         modelpath = "/Users/trondkr/Projects/is4dvar/GLORYS2V3/"
-    #    modelpath = "/work/users/trondk/GLORYS2V3/"
+        modelpath = "/work/users/trondk/NS8km/FORCING/GLORYS2V3_DATA/ftp.myocean.mercator-ocean.fr/Core/GLOBAL_REANALYSIS_PHYS_001_009/"
     if mytype == 'NORESM':
         modelpath = "/Users/trondkr/Projects/RegScen/NRCP45AERCN_f19_g16_CLE_01/"
         modelpath = "/work/users/trondk/REGSCEN/NRCP45AERCN_f19_g16_CLE_01/"
@@ -111,11 +111,11 @@ def main():
     # Define the path to the grid file
     if gridtype == "NS8KM":
         romsgridpath = "/Users/trondkr/Projects/is4dvar/Grid/nordsjoen_8km_smoothed02022015.nc"
-        #romsgridpath = "/work/users/trondk/NS8km/FORCING/GRID/nordsjoen_8km_grid_hmax20m_v3.nc"
+        romsgridpath = "/work/users/trondk/NS8km/FORCING/GRID/nordsjoen_8km_grid_hmax20m_v3.nc"
 
     if gridtype == "KINO":
         romsgridpath = "/work/users/trondk/KINO/GRID/kino_norseas_800m_grid.nc"
-        romsgridpath="/Users/trondkr/Projects/KINO/GRID/kino_norseas_800m_grid.nc"
+        #romsgridpath="/Users/trondkr/Projects/KINO/GRID/kino_norseas_800m_grid.nc"
 
     if gridtype == "REGSCEN":
         romsgridpath = "/Users/trondkr/Projects/RegScen/Grid/AA_10km_grid_noest.nc"
@@ -129,8 +129,8 @@ def main():
     else: isClimatology = False
 
     # Define the period to create forcing for
-    start_year  = 1950
-    end_year    = 1970
+    start_year  = 2009
+    end_year    = 2011
     start_month = 1
     end_month   = 12
 

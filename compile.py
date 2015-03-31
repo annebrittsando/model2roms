@@ -24,6 +24,9 @@ def help():
     module swap PrgEnv-pgi PrgEnv-gnu
     module unload notur
     Then remove the -fcompiler=intelem command
+
+    NOTE: cleanarray.f90 is no longer used as fill.90 has better fill options
+    using Laplace equation. 
     """
 
 def compileAllIFORT():
@@ -39,11 +42,12 @@ def compileAllIFORT():
     stdout_value = proc.communicate()
     log.writelines(repr(stdout_value))
 
-    print "Compiling cleanArray.f90 to create ==> clean.so"
-    proc = subprocess.Popen('f2py --verbose --fcompiler=intelem -c -m clean cleanArray.f90 --f90flags="-no-heap-arrays"',
-                           shell=True, stdout=subprocess.PIPE,)
-    stdout_value = proc.communicate()[0]
-    log.writelines(repr(stdout_value))
+    # obsolete: use fill.90 instead
+    #print "Compiling cleanArray.f90 to create ==> clean.so"
+    #proc = subprocess.Popen('f2py --verbose --fcompiler=intelem -c -m clean cleanArray.f90 --f90flags="-no-heap-arrays"',
+    #                       shell=True, stdout=subprocess.PIPE,)
+    #stdout_value = proc.communicate()[0]
+    #log.writelines(repr(stdout_value))
 
     print "Compiling interpolation.f90 to create ==> interpolation.so"
     proc = subprocess.Popen('f2py --verbose --fcompiler=intelem -c -m interpolation interpolation.f90 --f90flags="-no-heap-arrays"',
@@ -84,11 +88,11 @@ def compileAllGFORTRAN():
     stdout_value = proc.communicate()
     log.writelines(repr(stdout_value))
 
-    print "Compiling cleanArray.f90 to create ==> clean.so"
-    proc = subprocess.Popen('f2py --verbose -c -m clean cleanArray.f90',
-                           shell=True, stdout=subprocess.PIPE,)
-    stdout_value = proc.communicate()[0]
-    log.writelines(repr(stdout_value))
+    #print "Compiling cleanArray.f90 to create ==> clean.so"
+    #proc = subprocess.Popen('f2py --verbose -c -m clean cleanArray.f90',
+    #                       shell=True, stdout=subprocess.PIPE,)
+    #stdout_value = proc.communicate()[0]
+    #log.writelines(repr(stdout_value))
 
     print "Compiling interpolation.f90 to create ==> interpolation.so"
     proc = subprocess.Popen('f2py --verbose  -c -m interpolation interpolation.f90',
@@ -108,7 +112,7 @@ def compileAllGFORTRAN():
     print "\n==================================================================="
 
 compiler="ifort"
-#compiler="gfortran" # Hexagon
+compiler="gfortran" # Hexagon
 if compiler=="gfortran":
     compileAllGFORTRAN()
 else:
