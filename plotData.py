@@ -64,12 +64,12 @@ def contourMap(grdROMS, tlon, tlat, mydata, depthlevel, var):
         levels = np.arange(-2.0, 30.0, 0.5)
 
     if grdROMS.grdName=='GREENLAND':
-        map = Basemap(llcrnrlon=-45.5,
-                      llcrnrlat=53.5,
-                      urcrnrlon=15.5,
-                      urcrnrlat=75.7,
-                      resolution='i',projection='tmerc',lon_0=-20,lat_0=60,area_thresh=20.)
-        levels = np.arange(-2.0, 20.0, 0.5)
+        map = Basemap(llcrnrlon=-50,
+                      llcrnrlat=54,
+                      urcrnrlon=1,
+                      urcrnrlat=78,
+                      resolution='i',projection='tmerc',lon_0=-25,lat_0=60,area_thresh=200.)
+  levels = np.arange(-2.0, 20.0, 0.5)
 
     x, y = map(tlon,tlat)
 

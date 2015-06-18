@@ -19,8 +19,8 @@ except ImportError:
 __author__   = 'Trond Kristiansen'
 __email__    = 'trond.kristiansen@imr.no'
 __created__  = datetime(2008, 12, 9)
-__modified__ = datetime(2014, 10, 23)
-__version__  = "1.2"
+__modified__ = datetime(2015, 4, 8)
+__version__  = "1.5"
 __status__   = "Development"
 
 
@@ -150,6 +150,23 @@ class grdClass:
 
             IOverticalGrid.get_z_levels(self)
 
+        if self.type=='NS8KMZ':
+            self.grdType  = 'regular'
+            print '---> Assuming %s grid type for %s'%(self.grdType,self.type)
+            self.lon = self.cdf.variables["lon"][:]
+            self.lat = self.cdf.variables["lat"][:]
+            self.lonName='lon'
+            self.latName='lat'
+            #NOTE spelling error for depth in netcdf files
+            self.depth = self.cdf.variables["depth"][:]
+            self.Nlevels = len(self.depth)
+            self.fill_value=9.96921e+36
+
+            if np.rank(self.lon)==1:
+                    self.lon, self.lat = np.meshgrid(self.lon,self.lat)
+
+            IOverticalGrid.get_z_levels(self)
+
         if self.type=='NORESM':
             self.grdType  = 'regular'
             print '---> Assuming %s grid type for %s'%(self.grdType,self.type)
@@ -230,7 +247,7 @@ class grdClass:
             self.Mp=1
             self.fill_value=-9.99e+33
 
-        if self.type=='ROMS':
+        if self.type in ['ROMS','NS8KM']:
 
             self.write_clim=True
             self.write_bry=True
@@ -242,13 +259,24 @@ class grdClass:
             (https://www.myroms.org/forum/viewtopic.php?f=23&t=1254&hilit=critical+depth+tcline&sid=ec98a9e63e7857e2615b9182af752cde)
             the value of Tcline should now be equal to hc"""
 
-            self.vstretching=2
-            self.vtransform=2
-            self.Nlevels=40
-            self.theta_s=7.0
-            self.theta_b=0.0
-            self.Tcline=250.0
-            self.hc=250.0
+            if (self.type=='NS8KM'):
+                self.cdf.variables
+                self.vstretching=self.cdf.variables['Vstretching'][:]
+                self.vtransform=self.cdf.variables['Vtransform'][:]
+                self.Nlevels=len(self.cdf.variables['s_rho'][:]) + 1
+                self.theta_s=self.cdf.variables['theta_s'][:]
+                self.theta_b=self.cdf.variables['theta_b'][:]
+                self.Tcline=self.cdf.variables['Tcline'][:]
+                self.hc=self.cdf.variables['hc'][:]
+                print "CHECK :: self.Nlevels",self.Nlevels, self.theta_s,self.theta_b, self.Tcline
+            else:
+                self.vstretching=2
+                self.vtransform=4
+                self.Nlevels=40
+                self.theta_s=6.5
+                self.theta_b=2.5
+                self.Tcline=250.0
+                self.hc=250.0
             self.vars=[]
             self.lonName='lon_rho'
             self.latName='lat_rho'
@@ -283,6 +311,10 @@ class grdClass:
             self.lon_u  = self.cdf.variables["lon_u"][:,:]
             self.lat_u  = self.cdf.variables["lat_u"][:,:]
             self.mask_u = self.cdf.variables["mask_u"][:,:]
+            for findvar in self.cdf.variables:
+                if findvar=="lon_vert":
+                    self.lon_vert = self.cdf.variables["lon_vert"][:,:]
+                    self.lat_vert = self.cdf.variables["lat_vert"][:,:]
 
             self.lon_v  = self.cdf.variables["lon_v"][:,:]
             self.lat_v  = self.cdf.variables["lat_v"][:,:]
@@ -326,26 +358,25 @@ class grdClass:
             """Calculate the vertical stretching and transform functions"""
             IOverticalGrid.calculate_z_r(self)
             IOverticalGrid.calculate_z_w(self)
-
+           
             if (self.useESMF):
-                print self.grdfilename
                 self.esmfgrid_u = ESMF.Grid(filename=self.grdfilename, filetype=ESMF.FileFormat.GRIDSPEC,
                                        coord_names=['lon_u','lat_u'], add_mask=False)
                 self.esmfgrid_v = ESMF.Grid(filename=self.grdfilename, filetype=ESMF.FileFormat.GRIDSPEC,
                                       is_sphere=True, coord_names=['lon_v','lat_v'], add_mask=False)
-
         # Create grid for ESMF interpolation
         if (self.useESMF):
+            print "TEST:", self.grdfilename
             self.esmfgrid = ESMF.Grid(filename=self.grdfilename, filetype=ESMF.FileFormat.GRIDSPEC,
                                       is_sphere=True, coord_names=[self.lonName, self.latName], add_mask=False)
-
+            print "end"
 
 
     def getDims(self):
-        if self.type=="ROMS":
+        if self.type in ["ROMS","NS8KM"]:
             self.Lp=len(self.lat_rho[1,:])
             self.Mp=len(self.lat_rho[:,1])
-        if self.type in ['SODA','SODAMONTHLY','AVERAGE','GLORYS','NORESM','WOAMONTHLY']:
+        if self.type in ['SODA','SODAMONTHLY','AVERAGE','GLORYS','NORESM','WOAMONTHLY','NS8KMZ']:
             self.Lp=len(self.lat[1,:])
             self.Mp=len(self.lat[:,1])
 

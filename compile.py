@@ -111,9 +111,13 @@ def compileAllGFORTRAN():
     print "Compilation finished and results written to file => %s"%(logfile)
     print "\n==================================================================="
 
-compiler="ifort"
-compiler="gfortran" # Hexagon
-if compiler=="gfortran":
-    compileAllGFORTRAN()
-else:
-    compileAllIFORT()
+def compileFortran(compiler):
+    #compiler="gfortran" # Hexagon
+    if compiler=="gfortran":
+        compileAllGFORTRAN()
+        
+    if compiler=="ifort":
+        compileAllIFORT()
+
+if __name__ == "__main__":
+    compileFortran("ifort")
