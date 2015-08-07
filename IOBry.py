@@ -116,7 +116,7 @@ def createBryFile(grdROMS, outfilename, writeIce, mytype, myformat):
     vnc.units = "meter"
     vnc.coordinates ="lat_rho lon_rho"
     vnc.field = "bath, scalar"
-    vnc[:,:] = grdROMS.depth
+    vnc[:,:] = grdROMS.h
 
     vnc = f1.createVariable('s_rho', 'd', ('s_rho',),zlib=myzlib, fill_value=grdROMS.fill_value)
     vnc.long_name = "S-coordinate at RHO-points"
@@ -149,15 +149,15 @@ def createBryFile(grdROMS, outfilename, writeIce, mytype, myformat):
     vnc.long_name = "S-coordinate stretching curves at RHO-points"
     vnc.valid_min = -1.
     vnc.valid_max = 0.
-    vnc.field = "s_rho, scalar"
-    vnc[:] = np.flipud(grdROMS.Cs_rho)
+    vnc.field = "Cs_rho, scalar"
+    vnc[:] = grdROMS.Cs_rho
 
     vnc= f1.createVariable('Cs_w', 'd', ('s_w',),zlib=myzlib, fill_value=grdROMS.fill_value)
     vnc.long_name = "S-coordinate stretching curves at W-points"
     vnc.valid_min = -1.
     vnc.valid_max = 0.
-    vnc.field = "s_w, scalar"
-    vnc[:] = np.flipud(grdROMS.Cs_w)
+    vnc.field = "Cs_w, scalar"
+    vnc[:] = grdROMS.Cs_w
 
     vnc=f1.createVariable('hc','d')
     vnc.long_name = "S-coordinate parameter, critical depth" ;

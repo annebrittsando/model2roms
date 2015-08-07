@@ -3,7 +3,6 @@ from mpl_toolkits.basemap import Basemap
 from pylab import *
 
 def contourMap(grdROMS, tlon, tlat, mydata, depthlevel, var):
-
     map = Basemap(projection='ortho',lon_0=-20,lat_0=25, resolution='c', area_thresh=10000)
     levels = np.arange(-2.0, 30.0, 0.5)
 
@@ -35,7 +34,8 @@ def contourMap(grdROMS, tlon, tlat, mydata, depthlevel, var):
         levels = np.arange(-2.0, 20.0, 0.5)
 
     if grdROMS.grdName=='KINO':
-         map = Basemap(llcrnrlon=-18.0,
+        print "KINO"
+        map = Basemap(llcrnrlon=-18.0,
                       llcrnrlat=46.0,
                       urcrnrlon=25.5,
                       urcrnrlat=67.5,
@@ -69,7 +69,7 @@ def contourMap(grdROMS, tlon, tlat, mydata, depthlevel, var):
                       urcrnrlon=1,
                       urcrnrlat=78,
                       resolution='i',projection='tmerc',lon_0=-25,lat_0=60,area_thresh=200.)
-  levels = np.arange(-2.0, 20.0, 0.5)
+        levels = np.arange(-2.0, 20.0, 0.5)
 
     x, y = map(tlon,tlat)
 

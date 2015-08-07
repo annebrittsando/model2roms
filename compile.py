@@ -120,4 +120,4 @@ def compileFortran(compiler):
         compileAllIFORT()
 
 if __name__ == "__main__":
-    compileFortran("ifort")
+    compileFortran("gfortran")

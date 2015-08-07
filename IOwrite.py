@@ -119,7 +119,7 @@ def writeClimFile(grdROMS, ntime, outfilename, myvar, isClimatology, writeIce, m
         vnc.long_name = 'Bathymetry at RHO-points'
         vnc.units = 'meter'
         vnc.field = "bath, scalar"
-        vnc[:, :] = grdROMS.depth
+        vnc[:, :] = grdROMS.h
 
         vnc = f1.createVariable('f', 'd', ('eta_rho', 'xi_rho',), zlib=myzlib, fill_value=grdROMS.fill_value)
         vnc.long_name = 'Coriolis parameter at RHO-points'
@@ -150,7 +150,7 @@ def writeClimFile(grdROMS, ntime, outfilename, myvar, isClimatology, writeIce, m
             vnc.standard_name = "ocean_s_coordinate_g1"
             vnc.formula_terms = "s: s_rho C: Cs_r eta: zeta depth: h depth_c: hc"
         vnc.field = "s_rho, scalar"
-        vnc[:] = np.flipud(grdROMS.s_rho)
+        vnc[:] = grdROMS.s_rho
 
         vnc = f1.createVariable('s_w', 'd', ('s_w',), zlib=myzlib, fill_value=grdROMS.fill_value)
         vnc.long_name = "S-coordinate at W-points"
@@ -163,21 +163,21 @@ def writeClimFile(grdROMS, ntime, outfilename, myvar, isClimatology, writeIce, m
             vnc.standard_name = "ocean_s_coordinate_g1"
             vnc.formula_terms = "s: s_w C: Cs_w eta: zeta depth: h depth_c: hc"
         vnc.field = "s_w, scalar"
-        vnc[:] = np.flipud(grdROMS.s_w)
+        vnc[:] = grdROMS.s_w
 
         vnc = f1.createVariable('Cs_r', 'd', ('s_rho',), zlib=myzlib, fill_value=grdROMS.fill_value)
         vnc.long_name = "S-coordinate stretching curves at RHO-points"
         vnc.valid_min = -1.
         vnc.valid_max = 0.
         vnc.field = "s_rho, scalar"
-        vnc[:] = np.flipud(grdROMS.Cs_rho)
+        vnc[:] = grdROMS.Cs_rho
 
         vnc = f1.createVariable('Cs_w', 'd', ('s_w',), zlib=myzlib, fill_value=grdROMS.fill_value)
         vnc.long_name = "S-coordinate stretching curves at W-points"
         vnc.valid_min = -1.
         vnc.valid_max = 0.
         vnc.field = "s_w, scalar"
-        vnc[:] = np.flipud(grdROMS.Cs_w)
+        vnc[:] = grdROMS.Cs_w
 
         vnc = f1.createVariable('hc', 'd')
         vnc.long_name = "S-coordinate parameter, critical depth";

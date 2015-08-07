@@ -60,7 +60,7 @@ Module velocity
                         outdat(jc,ic) = outdat(jc,ic) + dat(kc,jc,ic)*abs(z_wu(kc+1,jc,ic) - z_wu(kc,jc,ic))
                   end do
                   if (abs(z_wu(Nroms,jc,ic)) > 0.0) then
-                    outdat(jc,ic) = outdat(jc,ic)/abs(z_wu(Nroms,jc,ic))
+                    outdat(jc,ic) = outdat(jc,ic)/abs(z_wu(1,jc,ic))
                   else
                     outdat(jc,ic) = 0.0
                   end if
@@ -129,7 +129,7 @@ Module velocity
                   end do
 
                   if (abs(z_wv(Nroms,jc,ic)) > 0.0) then
-                    outdat(jc,ic) = outdat(jc,ic)/abs(z_wv(Nroms,jc,ic))
+                    outdat(jc,ic) = outdat(jc,ic)/abs(z_wv(1,jc,ic))
                   else
                     outdat(jc,ic) = 0.0
                   end if

@@ -1,5 +1,5 @@
-import time
-from datetime import datetime
+import time, calendar
+from netCDF4 import Dataset, datetime, date2num,num2date
 import model2roms
 import IOstation
 import clim2bry
@@ -11,7 +11,7 @@ import atmosForcing
 __author__ = 'Trond Kristiansen'
 __email__ = 'trond.kristiansen@imr.no'
 __created__ = datetime(2009, 1, 30)
-__modified__ = datetime(2014, 12, 16)
+__modified__ = datetime(2015, 8, 7)
 __version__ = "1.5"
 __status__ = "Development"
 
@@ -69,44 +69,6 @@ def defineAbbreviation(gridtype):
         abbreviation = "kino"
       
     return abbreviation
-
-def createIDS(startdate,enddate,timeFrequencyOfInputData,isClimatology):
-
-    if (timeFrequencyOfInputData=='month'):
-        years = [(int(startdate.year) + kk) for kk in range(1 + int(enddate.year) - int(startdate.year))]
-        IDS=[]
-        # months from start month to end of first year
-        IDS.append([startdate.month+m for m in xrange(13-startdate.month)])
-        # months in a full year
-        months=[m+1 for m in xrange(12)]
-        [IDS.append(months) for kk in range(int(enddate.year) - int(startdate.year+1))]
-        # add final months of last year
-        if (startdate.year - enddate.year) > 1:
-            IDS.append([m+1 for m in xrange(enddate.month)])
-        
-        IDS = [item for sublist in IDS for item in sublist]
-      
-
-    if (timeFrequencyOfInputData=='day'):
-        # Assuming that e use reference date relative to 1948/1/1
-        refdate = datetime(1948,1,1)
-        startID = (startdate - refdate).days + 1
-        endID   = (enddate - refdate).days + 1
-        
-        IDS=[]
-        for ID in xrange(startID,endID,1):
-            IDS.append(ID)
-         
-    if isClimatology==True:
-        IDS=[i+1 for i in xrange(12)]
-      
-    if not IDS:
-        print "Unable to generate IDS for time looping: main.py -> func createIDS"
-        sys.exit()
-
-    IDS = [m+1 for m in xrange(12)]
-    return IDS
-
 
 def showInfo(myvars, romsgridpath, climName, initName, bryName, start_year, end_year, isClimatology, useESMF, myformat):
     if isClimatology:
@@ -169,13 +131,13 @@ def main():
         latlist = [54.5601, 63.7010, 60.4201, 67.5001, 41.6423]
 
     # Create the bry, init, and clim files for a given grid and input data
-    createOceanForcing = False
+    createOceanForcing = True
     # Create atmospheric forcing for the given grid
     createAtmosForcing = False
     # Create a smaller resolution grid based on your original. Decimates every second for
     # each time run
-    decimateGridfile = True
-    # Write ice values to file (for Arctic regions)
+    decimateGridfile = False
+        # Write ice values to file (for Arctic regions)
     writeIce = False
     # Use ESMF for the interpolation. This requires that you have ESMF and ESMPy installed (import ESMF)
     useESMF = True
@@ -184,6 +146,9 @@ def main():
     # Format to write the ouput to: 'NETCDF4', 'NETCDF4_CLASSIC', 'NETCDF3_64BIT', or 'NETCDF3_CLASSIC'
     # Using NETCDF4 automatically turns on compression of files (ZLIB)
     myformat='NETCDF4'
+    # Frequency of the input data: usually monthly 
+    timeFrequencyOfInputData = "day" #"month" # "month", "hour"
+
     # Subset input data. If you have global data you may want to seubset these to speed up reading. Make 
     # sure that your input data are cartesian (0-360 or -180:180, -90:90)
     subsetIndata = False
@@ -195,15 +160,14 @@ def main():
     indatatype = 'SODAMONTHLY'
     indatatype = 'WOAMONTHLY'
     indatatype = 'NORESM'
-    indatatype = 'GLORYS'
+    #indatatype = 'GLORYS'
     #indatatype = 'NS8KM'
-    #indatatype = 'NS8KMZ'
+    indatatype = 'NS8KMZ'
 
     # GRIDTYPES ------------------------------------------------------------------------------
     # Define what grid type you wnat to interpolate to 
     outgrid  = "NS8KM"
     #outgrid = "REGSCEN"
-    #outgrid = "GREENLAND"
     outgrid = "KINO"
 
     # Define what grid type you wnat to interpolate from: Can be Z for SIGMA for ROMS
@@ -243,8 +207,6 @@ def main():
     if indatatype == 'WOAMONTHLY':
         modelpath = "/Users/trondkr/Projects/is4dvar/createSSS/"
 
-    # Frequency of the input data: usually monthly 
-    timeFrequencyOfInputData = "month" # "month", "hour"
 
     # PATH TO GRID -----------------------------------------------------------------------------
     # Define the path to the grid file 
@@ -253,13 +215,13 @@ def main():
         romsgridpath = "/work/users/trondk/NS8km/FORCING/GRID/nordsjoen_8km_grid_hmax20m_v3.nc"
 
     if outgrid == "KINO":
-        romsgridpath = "/work/users/trondk/KINO/GRID/kino_norseas_800m_grid.nc"
-        romsgridpath="/Users/trondkr/Projects/KINO/GRID/kino_800m_12032015.nc"
+        romsgridpath = "/work/users/trondk/KINO/GRID/kino_1600m_03082015_vf20.nc"
+        #romsgridpath = "/Users/trondkr/Projects/KINO/GRID/kino_1600m_03082015_vf20.nc"
 
     if outgrid == "REGSCEN":
         romsgridpath = "/Users/trondkr/Projects/RegScen/Grid/AA_10km_grid_noest.nc"
         #romsgridpath = "/Users/trondkr/Projects/is4dvar/Grid/nordsjoen_8km_grid_hmax20m_v3.nc"
-        romsgridpath = "/work/users/trondk/REGSCEN/GRID/AA_10km_grid_noest.nc"
+        #romsgridpath = "/work/users/trondk/REGSCEN/GRID/AA_10km_grid_noest.nc"
 
     if outgrid == "GREENLAND":
         romsgridpath="/Users/trondkr/Projects/RegScen/Grid/Sermilik_grid_4000m.nc"
@@ -269,17 +231,19 @@ def main():
 
     # DETAILS -----------------------------------------------------------------------------------
     # Define the period to create forcing for
-    start_year  = 2009
-    end_year    = 2012
+    start_year  = 2010
+    end_year    = 2010
     start_month = 1
-    end_month   = 12
+    end_month   = 4
     start_day   = 1
-    end_day     = 30
+    end_day     = 31 
+    if (int(calendar.monthrange(end_year, end_month)[1]) < end_day):
+        end_day = int(calendar.monthrange(end_year, end_month)[1])
 
     startdate = datetime(start_year, start_month, start_day)
     enddate   = datetime(end_year, end_month, end_day)
     years = [start_year+year for year in xrange(end_year+1-start_year)]
-
+   
     # Define what and name of variables to include in the forcing files
     # -> myvars is the name model2roms uses to identify variables
     # -> varNames is the name of the variable found in the NetCDF input files
@@ -296,8 +260,14 @@ def main():
         varNames = ['votemper', 'vosaline', 'zeta', 'vozocrtx', 'vomecrty']
     
     if indatatype ==  'NS8KMZ':
+        fileNameIn, readFromOneFile = model2roms.getNS8KMZfilename(startdate.year, startdate.month, startdate.day, "S", modelpath)
+        
         myvars   = ['temperature', 'salinity', 'ssh', 'uvel', 'vvel']
-        varNames = ['votemper', 'vosaline', 'zeta', 'vozocrtx', 'vomecrty']
+
+        if (readFromOneFile):
+             varNames = ['temp', 'salt', 'zeta', 'u_eastward', 'v_northward']
+        else:
+             varNames = ['votemper', 'vosaline', 'zeta', 'vozocrtx', 'vomecrty']
 
     if indatatype == 'GLORYS':
         if (writeIce):
@@ -315,6 +285,10 @@ def main():
         myvars   = ['temperature','salinity', 'ssh', 'uvel', 'vvel','ageice','uice','vice','aice','hice','snow_thick']
         varNames = ['templvl','salnlvl','sealv', 'uvellvl', 'vvellvl','iage', 'uvel', 'vvel', 'aice', 'hi', 'hs']
 
+
+
+
+
     # NO EDIT BELOW ====================================================================================================
     abbreviation = defineAbbreviation(outgrid)
     climName,initName,bryName = defineOutputFilenames(abbreviation,start_year,end_year,start_month,end_month,start_day,end_day,indatatype)
@@ -322,10 +296,8 @@ def main():
     if isClimatology is True:
         climName=abbreviation + '_' + str(indatatype) + '_climatology.nc'  
 
-    IDS = createIDS(startdate,enddate,timeFrequencyOfInputData,isClimatology)
-
     # Create the grid object for the output grid
-    grdROMS = grd.grdClass(romsgridpath, "ROMS", outgridtype, useESMF,'ocean')
+    grdROMS = grd.grdClass(romsgridpath, "ROMS", outgridtype, useESMF,'ocean', outgrid)
     grdROMS.vars=myvars
 
     if (useESMF):
@@ -336,8 +308,8 @@ def main():
 
         showInfo(myvars, romsgridpath, climName, initName, bryName, start_year, end_year, isClimatology, useESMF, myformat)
 
-        model2roms.convertMODEL2ROMS(years, IDS, climName, initName, modelpath, romsgridpath, myvars, varNames, show_progress,
-                                         indatatype, outgridtype, isClimatology, writeIce, useESMF, useFilter, myformat, subsetIndata, subset=None)
+        model2roms.convertMODEL2ROMS(years, startdate, enddate, timeFrequencyOfInputData, climName, initName, modelpath, romsgridpath, myvars, varNames, show_progress,
+                                         indatatype, outgridtype, isClimatology, writeIce, useESMF, useFilter, myformat, subsetIndata, outgrid, subset=None)
 
         clim2bry.writeBry(grdROMS, start_year, bryName, climName, writeIce, indatatype, myformat)
 
@@ -345,8 +317,8 @@ def main():
         atmosForcing.createAtmosFileUV(grdROMS,modelpath,atmospath,startdate,enddate,useESMF,
             myformat,abbreviation,indatatype,gridtype,show_progress)
 
-    if decimateGridfile:
-        decimateGrid.createGrid(grdROMS, romsgridpath, "/Users/trondkr/Projects/KINO/GRID/kino_1600m_18062015.nc", 2)
+    #if decimateGridfile:
+        #decimateGrid.createGrid(grdROMS, "/Users/trondkr/Projects/KINO/GRID/kino_1600m_18072015.nc", "/Users/trondkr/Projects/KINO/GRID/kino_1600m_18072015v2.nc", 2)
 
     if extractStations:
         print "Running in station mode and extracting pre-defined station locations"

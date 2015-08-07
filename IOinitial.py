@@ -112,7 +112,7 @@ def createInitFile(grdROMS, ntime, outfilename, var, writeIce, mytype, myformat,
         vnc.long_name = 'Final bathymetry at RHO points'
         vnc.units = 'meter'
         vnc.field = "bath, scalar"
-        vnc[:,:] = grdROMS.depth
+        vnc[:,:] = grdROMS.h
 
         vnc = f1.createVariable('s_rho', 'd', ('s_rho',),zlib=myzlib, fill_value=grdROMS.fill_value)
         vnc.long_name = "S-coordinate at RHO-points"
@@ -126,7 +126,7 @@ def createInitFile(grdROMS, ntime, outfilename, var, writeIce, mytype, myformat,
             vnc.standard_name = "ocean_s_coordinate_g1"
             vnc.formula_terms = "s: s_rho C: Cs_r eta: zeta depth: h depth_c: hc"
         vnc.field = "s_rho, scalar"
-        vnc[:] = np.flipud(grdROMS.s_rho)
+        vnc[:] = grdROMS.s_rho
 
         vnc = f1.createVariable('s_w', 'd', ('s_w',),zlib=myzlib, fill_value=grdROMS.fill_value)
         vnc.long_name = "S-coordinate at W-points"
@@ -140,7 +140,7 @@ def createInitFile(grdROMS, ntime, outfilename, var, writeIce, mytype, myformat,
             vnc.standard_name = "ocean_s_coordinate_g1"
             vnc.formula_terms = "s: s_w C: Cs_w eta: zeta depth: h depth_c: hc"
         vnc.field = "s_w, scalar"
-        vnc[:] = np.flipud(grdROMS.s_w)
+        vnc[:] = grdROMS.s_w
 
         vnc= f1.createVariable('Cs_rho', 'd', ('s_rho',),zlib=myzlib, fill_value=grdROMS.fill_value)
         vnc.long_name = "S-coordinate stretching curves at RHO-points"

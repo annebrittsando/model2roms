@@ -20,7 +20,7 @@ Module interpolation
             ! deepest values at highest index (N+1 e.g. dat(N+1)==bottom, dat(1)==surface). This is done so because
             ! it is the way SODA data are organized (bottom at highest index). However, ROMS output files are organized vice versa, so
             ! to accomodate that the output values are stored according to the ROMS structure. Highest index (N+1) equals surface,
-            ! while lowest index equals bottom (index=1)(see how outdat(Nroms-kc+1,jc,ic) is used opposite of the loop over kc).
+            ! while lowest index equals bottom (index=1)(see how outdat(kc,jc,ic) is used opposite of the loop over kc).
             !
             ! Trond Kristiansen, December 2008, January, and March 2009
             ! Rutgers University, NJ.
@@ -70,14 +70,14 @@ Module interpolation
                       ! than SODA. This means that if no value, or only fill_value, is available from SODA where ROMS is
                       ! deepest, the closest value from SODA is found by looping upward in the water column.
                       IF (zr(kc,jc,ic) .LT. zs(Nsoda)) THEN
-                          outdat(Nroms-kc+1,jc,ic)=dat(Nsoda,jc,ic)
+                          outdat(kc,jc,ic)=dat(Nsoda,jc,ic)
                           if (MAXVAL(dat(:,jc,ic)) .GT. fill) then
                             if (dat(Nsoda,jc,ic) .LT. fill) then
                               !print*,'Inside dovert and finding deepest depth with good values. current',dat(Nsoda,jc,ic)
                               DO kT=1,Nsoda
                                 if (dat(Nsoda-kT,jc,ic) .GT. fill) then
                                     !print*,'working on depth',kT,'with value',dat(kT,jc,ic)
-                                    outdat(Nroms-kc+1,jc,ic)=dat(Nsoda-kT,jc,ic)
+                                    outdat(kc,jc,ic)=dat(Nsoda-kT,jc,ic)
                                     !print*,'Able to find good value at depth ', Nsoda-kT
                                     exit
                                 end if
@@ -88,7 +88,7 @@ Module interpolation
                     
                       ! CASE 2: ROMS shallower than SODA
                       ELSE IF (zr(kc,jc,ic) .GT. zs(1)) THEN
-                          outdat(Nroms-kc+1,jc,ic)=dat(1,jc,ic)
+                          outdat(kc,jc,ic)=dat(1,jc,ic)
                      
                       ELSE
                           ! DO LOOP BETWEEN SURFACE AND BOTTOM
@@ -97,7 +97,7 @@ Module interpolation
                               ! Deeper than some SODA depth layer, but shallower than next layer which is below bottom
                               IF (zr(kc,jc,ic) .LE. zs(kT) .AND.               &
                                 -(bathymetry(jc,ic)) .GT. zs(kT+1)) THEN
-                                outdat(Nroms-kc+1,jc,ic)=dat(kT,jc,ic)
+                                outdat(kc,jc,ic)=dat(kT,jc,ic)
                                 
                                 ! We do not want to give the deepest depth a fill_value, so we find
                                 ! the closest value to deepest depth.
@@ -107,7 +107,7 @@ Module interpolation
                                        !print*,'case3:Need to find better value for depth ',kT,'which has value ',dat(kT,jc,ic)
                                         DO kkT=1,Nsoda
                                             if (dat(kT-kkT,jc,ic) .GT. fill) then
-                                                 outdat(Nroms-kc+1,jc,ic)=dat(kT-kkT,jc,ic)
+                                                 outdat(kc,jc,ic)=dat(kT-kkT,jc,ic)
                             
                                                 exit
                                             end if
@@ -118,7 +118,7 @@ Module interpolation
                                 ! CASE 4: Special case where ROMS layers are much deeper than in SODA
                                 ELSE IF (zr(kc,jc,ic) .LE. zs(kT) .AND. dat(kT,jc,ic) .GT. fill &
                                 .AND. dat(kT+1,jc,ic) .LE. fill) THEN
-                                outdat(Nroms-kc+1,jc,ic)=dat(kT,jc,ic)
+                                outdat(kc,jc,ic)=dat(kT,jc,ic)
                               
                               
                               ! CASE 5: ROMS layer in between two SODA layers
@@ -132,7 +132,7 @@ Module interpolation
                                  
                                  rz1 = 1.0-rz2
         
-                                 outdat(Nroms-kc+1,jc,ic) = (rz1*dat(kT+1,jc,ic) &
+                                 outdat(kc,jc,ic) = (rz1*dat(kT+1,jc,ic) &
                                  + rz2*dat(kT,jc,ic))
                                 
                                 if (MAXVAL(dat(:,jc,ic)) .GT. fill) then
@@ -144,7 +144,7 @@ Module interpolation
                                             if (dat(kT-kkT,jc,ic) .GT. fill .and. dat(kT-kkT+1,jc,ic) .GT. fill  ) then
                                                  !print*,'CASE 4: Found good value at depth',kT-kkT,kt-kkT+1
                                                  !print*,'with values',dat(kT-kkT,jc,ic), dat(kt-kkT+1,jc,ic)
-                                                 outdat(Nroms-kc+1,jc,ic) = (rz1*dat(kT+1-kkT,jc,ic) &
+                                                 outdat(kc,jc,ic) = (rz1*dat(kT+1-kkT,jc,ic) &
                                                  + rz2*dat(kT-kkT,jc,ic))
                             
                                                 exit

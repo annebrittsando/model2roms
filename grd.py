@@ -26,7 +26,7 @@ __status__   = "Development"
 
 class grdClass:
 
-    def __init__(self,grdfilename,type,name,useESMF,realm):
+    def __init__(self,grdfilename,type,name,useESMF,realm,outgrid):
         """
         The object is initialised and created through the __init__ method
         As an example of how to use, these lines return a grid object called grdTEST:
@@ -36,7 +36,7 @@ class grdClass:
 
         self.grdfilename= grdfilename
         self.type=type
-        self.grdName=name
+        self.grdName=outgrid
         self.useESMF=useESMF
         self.realm=realm
 
@@ -76,11 +76,11 @@ class grdClass:
             print '---> Assuming %s grid type for %s'%(self.grdType,self.type)
             self.lon = self.cdf.variables["lon"][:]
             self.lat = self.cdf.variables["lat"][:]
-            self.lonName='lon'
-            self.latName='lat'
-            self.depth = self.cdf.variables["depth"][:]
-            self.Nlevels = len(self.depth)
-            self.fill_value=-9.99e+33
+            self.lonName = 'lon'
+            self.latName = 'lat'
+            self.h = self.cdf.variables["depth"][:]
+            self.Nlevels = len(self.h)
+            self.fill_value = -9.99e+33
 
             if np.rank(self.lon)==1:
                     self.lon, self.lat = np.meshgrid(self.lon,self.lat)
@@ -90,11 +90,11 @@ class grdClass:
             print '---> Assuming %s grid type for %s'%(self.grdType,self.type)
             self.lon = self.cdf.variables["lon"][:]
             self.lat = self.cdf.variables["lat"][:]
-            self.lonName='lon'
-            self.latName='lat'
-            self.depth = self.cdf.variables["depth"][:]
-            self.Nlevels = len(self.depth)
-            self.fill_value=9.96921e+36
+            self.lonName = 'lon'
+            self.latName = 'lat'
+            self.h = self.cdf.variables["depth"][:]
+            self.Nlevels = len(self.h)
+            self.fill_value = 9.96921e+36
 
             if np.rank(self.lon)==1:
                     self.lon, self.lat = np.meshgrid(self.lon,self.lat)
@@ -108,9 +108,9 @@ class grdClass:
             self.lat = self.cdf.variables["LAT"][:]
             self.lonName='LON'
             self.latName='LAT'
-            self.depth = self.cdf.variables["DEPTH"][:]
-            self.Nlevels = len(self.depth)
-            self.fill_value=-9.99e+33
+            self.h = self.cdf.variables["DEPTH"][:]
+            self.Nlevels = len(self.h)
+            self.fill_value = -9.99e+33
 
             if np.rank(self.lon)==1:
                     self.lon, self.lat = np.meshgrid(self.lon,self.lat)
@@ -124,9 +124,9 @@ class grdClass:
             self.lat = self.cdf.variables["lat"][:]
             self.lonName='lon'
             self.latName='lat'
-            self.depth = self.cdf.variables["depth"][:]
-            self.Nlevels = len(self.depth)
-            self.fill_value=-9.99e+33
+            self.h = self.cdf.variables["depth"][:]
+            self.Nlevels = len(self.h)
+            self.fill_value = -9.99e+33
 
             if np.rank(self.lon)==1:
                     self.lon, self.lat = np.meshgrid(self.lon,self.lat)
@@ -141,9 +141,9 @@ class grdClass:
             self.lonName='nav_lon'
             self.latName='nav_lat'
             #NOTE spelling error for depth in netcdf files
-            self.depth = self.cdf.variables["deptht"][:]
-            self.Nlevels = len(self.depth)
-            self.fill_value=9.96921e+36
+            self.h = self.cdf.variables["deptht"][:]
+            self.Nlevels = len(self.h)
+            self.fill_value = 9.96921e+36
 
             if np.rank(self.lon)==1:
                     self.lon, self.lat = np.meshgrid(self.lon,self.lat)
@@ -158,9 +158,9 @@ class grdClass:
             self.lonName='lon'
             self.latName='lat'
             #NOTE spelling error for depth in netcdf files
-            self.depth = self.cdf.variables["depth"][:]
-            self.Nlevels = len(self.depth)
-            self.fill_value=9.96921e+36
+            self.h = self.cdf.variables["depth"][:]
+            self.Nlevels = len(self.h)
+            self.fill_value = 9.96921e+36
 
             if np.rank(self.lon)==1:
                     self.lon, self.lat = np.meshgrid(self.lon,self.lat)
@@ -186,8 +186,8 @@ class grdClass:
             self.fieldDst_u='NaN'
             self.fieldDst_v='NaN'
 
-           # self.depth = self.cdf.variables["depth"][:]
-            self.depth=np.asarray([0, 5, 10, 15, 20, 25, 30, 40, 50, 62.5, 75, 87.5, 100, 112.5, 125,
+           # self.h = self.cdf.variables["depth"][:]
+            self.h=np.asarray([0, 5, 10, 15, 20, 25, 30, 40, 50, 62.5, 75, 87.5, 100, 112.5, 125,
     137.5, 150, 175, 200, 225, 250, 275, 300, 350, 400, 450, 500, 550, 600,
     650, 700, 750, 800, 850, 900, 950, 1000, 1050, 1100, 1150, 1200, 1250,
     1300, 1350, 1400, 1450, 1500, 1625, 1750, 1875, 2000, 2250, 2500, 2750,
@@ -195,7 +195,7 @@ class grdClass:
     6000, 6250, 6500, 6750])
 
 
-            self.Nlevels = len(self.depth)
+            self.Nlevels = len(self.h)
             self.fill_value=-32768
 
             if np.rank(self.lon)==1:
@@ -216,8 +216,8 @@ class grdClass:
 
 
             self.lat = self.cdf.variables["Latitude"][:]
-            self.depth = self.cdf.variables["Depth"][:]
-            self.Nlevels = len(self.depth)
+            self.h = self.cdf.variables["Depth"][:]
+            self.Nlevels = len(self.h)
             self.fill_value=-9.99e+33
 
             if np.rank(self.lon)==1:
@@ -229,7 +229,7 @@ class grdClass:
 
             self.lon = self.cdf.variables["lon"][:]
             self.lat = self.cdf.variables["lat"][:]
-            self.depth = self.cdf.variables["depth"][:]
+            self.h = self.cdf.variables["depth"][:]
             self.time = self.cdf.variables["time"][:]
 
             self.Lp=1
@@ -240,7 +240,7 @@ class grdClass:
 
             self.lon = 0.0
             self.lat = 0.0
-            self.depth = 0.0
+            self.h = 0.0
             self.time = 0.0
 
             self.Lp=1
@@ -260,7 +260,7 @@ class grdClass:
             the value of Tcline should now be equal to hc"""
 
             if (self.type=='NS8KM'):
-                self.cdf.variables
+                
                 self.vstretching=self.cdf.variables['Vstretching'][:]
                 self.vtransform=self.cdf.variables['Vtransform'][:]
                 self.Nlevels=len(self.cdf.variables['s_rho'][:]) + 1
@@ -268,19 +268,20 @@ class grdClass:
                 self.theta_b=self.cdf.variables['theta_b'][:]
                 self.Tcline=self.cdf.variables['Tcline'][:]
                 self.hc=self.cdf.variables['hc'][:]
-                print "CHECK :: self.Nlevels",self.Nlevels, self.theta_s,self.theta_b, self.Tcline
             else:
-                self.vstretching=2
-                self.vtransform=4
+                self.vstretching=4
+                self.vtransform=2
+                print "self.vtransform %s self.vstretching %s"%(self.vtransform,self.vstretching)
+
                 self.Nlevels=40
-                self.theta_s=6.5
-                self.theta_b=2.5
+                self.theta_s=7.0
+                self.theta_b=0.1
                 self.Tcline=250.0
-                self.hc=250.0
+               
             self.vars=[]
             self.lonName='lon_rho'
             self.latName='lat_rho'
-
+            print "self.grdName=",self.grdName
             """Set initTime to 1 if you dont want the first timestep to be
             the initial field (no ubar and vbar if time=0)"""
 
@@ -301,12 +302,28 @@ class grdClass:
             self.time     = 0
             self.reftime  = 0
             self.grdType  = 'regular'
+            self.mask_rho = self.cdf.variables["mask_rho"][:,:]
             self.lon_rho  = self.cdf.variables["lon_rho"][:,:]
             self.lat_rho  = self.cdf.variables["lat_rho"][:,:]
+            self.h        = self.cdf.variables["h"][:,:]
+            self.hmin     = self.h[self.h>0].min()
+            if self.vtransform == 1:
+                self.hc = min(self.hmin, self.Tcline)
+                if (self.Tcline > self.hmin):
+                    print 'Vertical transformation parameters are not defined correctly in either gridid.txt or in the history files: \n Tc\
+line = %d and hmin = %d. \n You need to make sure that Tcline <= hmin when using transformation 1.'%(self.Tcline,self.hmin)
+            else:
+                self.hc = self.Tcline
 
-            self.depth    = self.cdf.variables["h"][:,:]
+            zeta = None
+            if zeta is None:
+                self.zeta = np.zeros(self.h.shape)
+            else:
+                self.zeta = zeta
 
-            self.mask_rho = self.cdf.variables["mask_rho"][:,:]
+            for findvar in self.cdf.variables:
+                if findvar=="hraw":
+                    self.hraw     = self.cdf.variables["hraw"][:,:,:]
 
             self.lon_u  = self.cdf.variables["lon_u"][:,:]
             self.lat_u  = self.cdf.variables["lat_u"][:,:]
@@ -316,9 +333,46 @@ class grdClass:
                     self.lon_vert = self.cdf.variables["lon_vert"][:,:]
                     self.lat_vert = self.cdf.variables["lat_vert"][:,:]
 
+            for findvar in self.cdf.variables:
+                if findvar=="x_rho":
+                    self.x_rho = self.cdf.variables["x_rho"][:,:]
+                    self.y_rho = self.cdf.variables["y_rho"][:,:]
+
+            for findvar in self.cdf.variables:
+                if findvar=="x_u":
+                    self.x_u = self.cdf.variables["x_u"][:,:]
+                    self.y_u = self.cdf.variables["y_u"][:,:]
+            
+            for findvar in self.cdf.variables:
+                if findvar=="x_v":
+                    self.x_v = self.cdf.variables["x_v"][:,:]
+                    self.y_v = self.cdf.variables["y_v"][:,:]
+
+            for findvar in self.cdf.variables:
+                if findvar=="x_psi":
+                    self.x_psi = self.cdf.variables["x_psi"][:,:]
+                    self.y_psi = self.cdf.variables["y_psi"][:,:]
+
+            for findvar in self.cdf.variables:
+                if findvar=="x_vert":
+                    self.x_vert = self.cdf.variables["x_vert"][:,:]
+                    self.y_vert = self.cdf.variables["y_vert"][:,:]
+
+            for findvar in self.cdf.variables:
+                if findvar=="xl":
+                    self.xl = self.cdf.variables["xl"][:]
+                    self.el = self.cdf.variables["el"][:]
+
+            for findvar in self.cdf.variables:
+                if findvar=="dmde":
+                    self.dmde = self.cdf.variables["dmde"][:,:]
+                    self.dndx = self.cdf.variables["dndx"][:,:]
+
             self.lon_v  = self.cdf.variables["lon_v"][:,:]
             self.lat_v  = self.cdf.variables["lat_v"][:,:]
             self.mask_v = self.cdf.variables["mask_v"][:,:]
+
+            self.spherical = self.cdf.variables["spherical"][:]
 
             self.lon_psi  = self.lon_u[:-1,:]
             self.lat_psi  = self.lat_v[:,:-1]
@@ -355,10 +409,10 @@ class grdClass:
                     self.lon_u, self.lat_u = np.meshgrid(self.lon_u,self.lat_u)
                     self.lon_v, self.lat_v = np.meshgrid(self.lon_v,self.lat_v)
 
-            """Calculate the vertical stretching and transform functions"""
-            IOverticalGrid.calculate_z_r(self)
-            IOverticalGrid.calculate_z_w(self)
-           
+            """Setup the vertical coordinate system"""
+            print "self %s"%(self.vtransform)
+            IOverticalGrid.calculateVgrid(self)
+        
             if (self.useESMF):
                 self.esmfgrid_u = ESMF.Grid(filename=self.grdfilename, filetype=ESMF.FileFormat.GRIDSPEC,
                                        coord_names=['lon_u','lat_u'], add_mask=False)
@@ -366,10 +420,9 @@ class grdClass:
                                       is_sphere=True, coord_names=['lon_v','lat_v'], add_mask=False)
         # Create grid for ESMF interpolation
         if (self.useESMF):
-            print "TEST:", self.grdfilename
             self.esmfgrid = ESMF.Grid(filename=self.grdfilename, filetype=ESMF.FileFormat.GRIDSPEC,
                                       is_sphere=True, coord_names=[self.lonName, self.latName], add_mask=False)
-            print "end"
+          
 
 
     def getDims(self):
