@@ -138,7 +138,7 @@ def main():
     # each time run
     decimateGridfile = False
         # Write ice values to file (for Arctic regions)
-    writeIce = False
+    writeIce = True
     # Use ESMF for the interpolation. This requires that you have ESMF and ESMPy installed (import ESMF)
     useESMF = True
     # Apply filter to smooth the 2D fields after interpolation (time consuming)
@@ -147,7 +147,7 @@ def main():
     # Using NETCDF4 automatically turns on compression of files (ZLIB)
     myformat='NETCDF4'
     # Frequency of the input data: usually monthly 
-    timeFrequencyOfInputData = "day" #"month" # "month", "hour"
+    timeFrequencyOfInputData = "day" #, "month", "hour"
 
     # Subset input data. If you have global data you may want to seubset these to speed up reading. Make 
     # sure that your input data are cartesian (0-360 or -180:180, -90:90)
@@ -160,7 +160,7 @@ def main():
     indatatype = 'SODAMONTHLY'
     indatatype = 'WOAMONTHLY'
     indatatype = 'NORESM'
-    #indatatype = 'GLORYS'
+    indatatype = 'GLORYS'
     #indatatype = 'NS8KM'
     indatatype = 'NS8KMZ'
 
@@ -201,8 +201,8 @@ def main():
         modelpath = "/Users/trondkr/Projects/is4dvar/grid2lonlat/RESULTS/"
     
     if indatatype == 'NS8KMZ':
-        modelpath = "/Users/trondkr/Projects/is4dvar/grid2lonlat/DELIVERY/"
-        modelpath = "/work/shared/imr/NS8KM/DELIVERY2/"
+        modelpath = "/Users/trondkr/Dropbox/deliveryFOFINAL/"
+        modelpath = "/work/shared/imr/NS8KM/deliveryFO/FINAL/"
 
     if indatatype == 'WOAMONTHLY':
         modelpath = "/Users/trondkr/Projects/is4dvar/createSSS/"
@@ -212,11 +212,11 @@ def main():
     # Define the path to the grid file 
     if outgrid == "NS8KM":
         romsgridpath = "/Users/trondkr/Projects/is4dvar/Grid/nordsjoen_8km_smoothed02022015.nc"
-        romsgridpath = "/work/users/trondk/NS8km/FORCING/GRID/nordsjoen_8km_grid_hmax20m_v3.nc"
+       # romsgridpath = "/work/users/trondk/NS8km/FORCING/GRID/nordsjoen_8km_grid_hmax20m_v3.nc"
 
     if outgrid == "KINO":
-        romsgridpath = "/work/users/trondk/KINO/GRID/kino_1600m_03082015_vf20.nc"
-        #romsgridpath = "/Users/trondkr/Projects/KINO/GRID/kino_1600m_03082015_vf20.nc"
+        romsgridpath = "/work/users/trondk/KINO/GRID/kino_1600m_07082015_vf20.nc"
+        #romsgridpath = "/Users/trondkr/Projects/KINO/GRID/kino_1600m_07082015_vf20.nc"
 
     if outgrid == "REGSCEN":
         romsgridpath = "/Users/trondkr/Projects/RegScen/Grid/AA_10km_grid_noest.nc"
@@ -232,11 +232,15 @@ def main():
     # DETAILS -----------------------------------------------------------------------------------
     # Define the period to create forcing for
     start_year  = 2010
-    end_year    = 2010
+    end_year    = 2012
     start_month = 1
-    end_month   = 4
-    start_day   = 1
-    end_day     = 31 
+    end_month   = 12
+    start_day   = 15
+    end_day     = 15
+
+    if (int(calendar.monthrange(start_year, start_month)[1]) < start_day):
+        start_day = int(calendar.monthrange(start_year, start_month)[1])
+
     if (int(calendar.monthrange(end_year, end_month)[1]) < end_day):
         end_day = int(calendar.monthrange(end_year, end_month)[1])
 
@@ -284,9 +288,6 @@ def main():
     if indatatype == 'NORESM':
         myvars   = ['temperature','salinity', 'ssh', 'uvel', 'vvel','ageice','uice','vice','aice','hice','snow_thick']
         varNames = ['templvl','salnlvl','sealv', 'uvellvl', 'vvellvl','iage', 'uvel', 'vvel', 'aice', 'hi', 'hs']
-
-
-
 
 
     # NO EDIT BELOW ====================================================================================================

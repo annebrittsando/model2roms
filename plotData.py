@@ -113,7 +113,7 @@ def contourMap(grdROMS, tlon, tlat, mydata, depthlevel, var):
         os.makedirs('figure')
     plt.savefig(plotfile)
     print "Saved figure: %s"%(plotfile)
-    #plt.show()
+    plt.show()
 
 def contourStationData(data,timedata,datedata,depthdata,stationName):
 

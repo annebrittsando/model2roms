@@ -80,11 +80,11 @@ def doHorInterpolationRegularGrid(myvar, grdROMS, grdMODEL, mydata, show_progres
         field=field*grdROMS.mask_rho
         array1[k,:,:]=field
   
-      #  if k in  xrange(grdMODEL.Nlevels): #[34,17,2]:
-      #      import plotData
-      #      plotData.contourMap(grdROMS, grdROMS.lon_rho, grdROMS.lat_rho, field, str(k)+'_withfilter', myvar)
-      #  if __debug__:
-      #       print "Data range after horisontal interpolation: ", field.min(), field.max()
+       # if k in [34,17,2]:
+       #     import plotData
+       #     plotData.contourMap(grdROMS, grdROMS.lon_rho, grdROMS.lat_rho, field, str(k)+'_withfilter', myvar)
+       # if __debug__:
+       #      print "Data range after horisontal interpolation: ", field.min(), field.max()
 
         if show_progress is True:
             progress.update(k)

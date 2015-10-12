@@ -271,17 +271,16 @@ class grdClass:
             else:
                 self.vstretching=4
                 self.vtransform=2
-                print "self.vtransform %s self.vstretching %s"%(self.vtransform,self.vstretching)
-
+               
                 self.Nlevels=40
                 self.theta_s=7.0
                 self.theta_b=0.1
                 self.Tcline=250.0
-               
+                self.hc = 250
+
             self.vars=[]
             self.lonName='lon_rho'
             self.latName='lat_rho'
-            print "self.grdName=",self.grdName
             """Set initTime to 1 if you dont want the first timestep to be
             the initial field (no ubar and vbar if time=0)"""
 
@@ -309,6 +308,7 @@ class grdClass:
             self.hmin     = self.h[self.h>0].min()
             if self.vtransform == 1:
                 self.hc = min(self.hmin, self.Tcline)
+                self.hc = self.Tcline
                 if (self.Tcline > self.hmin):
                     print 'Vertical transformation parameters are not defined correctly in either gridid.txt or in the history files: \n Tc\
 line = %d and hmin = %d. \n You need to make sure that Tcline <= hmin when using transformation 1.'%(self.Tcline,self.hmin)
@@ -410,7 +410,6 @@ line = %d and hmin = %d. \n You need to make sure that Tcline <= hmin when using
                     self.lon_v, self.lat_v = np.meshgrid(self.lon_v,self.lat_v)
 
             """Setup the vertical coordinate system"""
-            print "self %s"%(self.vtransform)
             IOverticalGrid.calculateVgrid(self)
         
             if (self.useESMF):

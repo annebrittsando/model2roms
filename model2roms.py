@@ -10,6 +10,7 @@ import grd
 import barotropic
 import IOinitial
 import IOsubset
+import datetimeFunctions
 
 try:
     import ESMF
@@ -23,37 +24,7 @@ __modified__ = datetime(2014, 12, 1)
 __version__ = "1.5"
 __status__ = "Development, modified on 15.08.2008,01.10.2009,07.01.2010, 15.07.2014, 01.12.2014, 07.08.2015"
 
-
-def createListOfMonths(currentyear,startdate,enddate,isClimatology):
-
-    print currentyear, startdate.year, enddate.year
-    if currentyear == startdate.year:
-        IDS=[startdate.month+m for m in xrange(13-startdate.month)]
-        # months from start month to end of first year
-       
-    elif currentyear == enddate.year:
-        IDS=[1+m for m in xrange(enddate.month)+1]
-        # months from first month to last month of last year
-        
-    elif startdate.year < currentyear < enddate.year:
-        # months from first month to last month of last year
-        IDS = [1+m for m in xrange(13)]
-        
-    elif startdate.year == enddate.year:
-        # months from first month to last month of last year
-        IDS = [startdate.month + m for m in xrange(enddate.month+1)]
-        
-    print "Months for year %s : %s"%(currentyear,IDS)
-
-    if isClimatology==True:
-        IDS = [i+1 for i in xrange(12)]
-      
-    if not IDS:
-        print "Unable to generate IDS for time looping: main.py -> func createIDS"
-        sys.exit()
-    
-    return IDS
-
+            
 def VerticalInterpolation(myvar, array1, array2, grdROMS, grdMODEL):
     outINDEX_ST = (grdROMS.Nlevels, grdROMS.eta_rho, grdROMS.xi_rho)
     outINDEX_U = (grdROMS.Nlevels, grdROMS.eta_u, grdROMS.xi_u)
@@ -414,10 +385,12 @@ def getNS8KMfilename(year, month, day, myvar, dataPath):
 
 def getNS8KMZfilename(year, month, day, myvar, dataPath):
 
-    allInOneFile = '/work/users/trondk/KINO/FORCING/1600M/northsea_8km_z_MyOceanFO_2009_2012.nc'
+    allInOneFile = '/work/users/trondk/KINO/FORCING/1600M/northsea_8km_z_06122009_22122012.nc'
+    #allInOneFile = '/Users/trondkr/Projects/KINO/northsea_8km_z_MyOceanFO_2009_2012_subset.nc'
+
     if os.path.exists(allInOneFile):
         readFromOneFile = True
-        print "NOTE ! READING ALL MYOCEAN DATA FROM ONE FILE"
+        print "NOTE ! READING ALL MYOCEAN FORCING DATA FROM ONE FILE"
         return allInOneFile, readFromOneFile
     else:
         readFromOneFile = False
@@ -425,7 +398,7 @@ def getNS8KMZfilename(year, month, day, myvar, dataPath):
             mymonth='0%s'%(month)
         else:
             mymonth='%s'%(month)
-        filename = dataPath + str(year)+str(mymonth)+'15_mm-IMR-MODEL-ROMS-NWS-20140430-fv02.1.nc'
+        filename = dataPath + str(year)+str(mymonth)+'15_mm-IMR-MODEL-ROMS-NWS-20150822-fv04.1.nc'
         return filename, readFromOneFile
 
 def getSODAMONTHLYfilename(year, month, day, myvar, dataPath):
@@ -501,11 +474,10 @@ def get3Ddata(grdROMS, grdMODEL, myvar, indatatype, year, month, day, varNames, 
   
                 timesteps = (cdf.variables["time"][:]).tolist()
                 timeindex = timesteps.index(jd)
-                print "ONE FILE: Found index %s for ID %s JD %s"%(timeindex,month,jd)
                 data = np.squeeze(cdf.variables[str(varNames[varN])][timeindex,:,:,:])
             else:
                 data = np.squeeze(cdf.variables[str(varNames[varN])][0,:,:,:])
-                
+                print "Range of data",varN, np.min(data),np.max(data)
             data=np.where(data.mask,grdROMS.fill_value,data)
      
         if indatatype == "GLORYS":
@@ -700,6 +672,7 @@ def get2Ddata(grdROMS, grdMODEL, myvar, indatatype, year, month, day, varNames, 
         if indatatype == "NS8KMZ":
             filename, readFromOneFile = getNS8KMZfilename(year, month, day, varNames[varN], dataPath)
             cdf = Dataset(filename)
+            print "Reading from file", filename
             if (readFromOneFile):
                 jdref = date2num(datetime(1948,1,1),cdf.variables["time"].units,calendar=cdf.variables["time"].calendar)
                 currentdate = datetime(year, month, day, 12)
@@ -881,24 +854,10 @@ def convertMODEL2ROMS(years, startdate, enddate, timeFrequencyOfInputData, climN
     time = 0; firstRun = True
 
     for year in years:
-        months = createListOfMonths(year,startdate,enddate,isClimatology)
-        print "Months to be used in year %s: %s"%(year,months)
+        months = datetimeFunctions.createListOfMonths(year,startdate,enddate,isClimatology)
+        
         for month in months:
-            
-            if timeFrequencyOfInputData == 'day':
-                dayStep=7
-                if dayStep > 1:
-                    print "WARNING!"
-                    print "----------------------------------------------------------------------"
-                    print "You are only using every %s days of input data! (model2roms.py)"%(dayStep)
-                    print "----------------------------------------------------------------------"
-                    
-                ndays = int(calendar.monthrange(year, month)[1])
-                days = [d+1 for d in xrange(0,ndays,dayStep)]
-               
-            if timeFrequencyOfInputData == 'month':
-                days = [15]
-            print "Days to be used in year %s: %s"%(year, days)
+            days = datetimeFunctions.createListOfDays(year,month,startdate,enddate,isClimatology,timeFrequencyOfInputData)
 
             for day in days:
                 # Get the current date for given timestep 
