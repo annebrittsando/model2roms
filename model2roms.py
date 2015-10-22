@@ -339,8 +339,10 @@ def getGLORYSfilename(year, month, day, myvar, dataPath):
 
     # GLORYS change the name in the middle of the time-series (on December 2010) and we have to
     # account for that
-    if (year >= 2010 and month == 12) or ( year >= 2011 ):
+    if (2013 > year >= 2010 and month == 12) or ( 2013 > year >= 2011 ):
         production = "R20140520"
+    elif (year >= 2013):
+        production = "R20141205"
     else:
         production = "R20130808"
 

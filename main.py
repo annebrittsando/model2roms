@@ -138,7 +138,7 @@ def main():
     # each time run
     decimateGridfile = False
         # Write ice values to file (for Arctic regions)
-    writeIce = True
+    writeIce = False
     # Use ESMF for the interpolation. This requires that you have ESMF and ESMPy installed (import ESMF)
     useESMF = True
     # Apply filter to smooth the 2D fields after interpolation (time consuming)
@@ -162,13 +162,13 @@ def main():
     indatatype = 'NORESM'
     indatatype = 'GLORYS'
     #indatatype = 'NS8KM'
-    indatatype = 'NS8KMZ'
+    #indatatype = 'NS8KMZ'
 
     # GRIDTYPES ------------------------------------------------------------------------------
     # Define what grid type you wnat to interpolate to 
     outgrid  = "NS8KM"
     #outgrid = "REGSCEN"
-    outgrid = "KINO"
+    #outgrid = "KINO"
 
     # Define what grid type you wnat to interpolate from: Can be Z for SIGMA for ROMS
     # vertical coordinate system or ZLEVEL
@@ -188,8 +188,8 @@ def main():
     if indatatype == 'GLORYS':
         modelpath = "/Volumes/MacintoshHD2/Datasets/GLOBAL_REANALYSIS_PHYS_001_009/"
         modelpath = "/Users/trondkr/Projects/is4dvar/GLORYS2V3/"
-        modelpath = "/work/users/trondk/NS8km/FORCING/GLORYS2V3_DATA/ftp.myocean.mercator-ocean.fr/Core/GLOBAL_REANALYSIS_PHYS_001_009/"
-    
+        modelpath = "/work/shared/imr/NS8KM/FORCING/GLORYS2V3/ftp.myocean.mercator-ocean.fr/Core/GLOBAL_REANALYSIS_PHYS_001_009/"
+        
     if indatatype == 'NORESM':
         modelpath = "/Users/trondkr/Projects/RegScen/NRCP45AERCN_f19_g16_CLE_01/"
         #modelpath = "/work/users/trondk/REGSCEN/NRCP45AERCN_f19_g16_CLE_01/"
@@ -212,7 +212,7 @@ def main():
     # Define the path to the grid file 
     if outgrid == "NS8KM":
         romsgridpath = "/Users/trondkr/Projects/is4dvar/Grid/nordsjoen_8km_smoothed02022015.nc"
-       # romsgridpath = "/work/users/trondk/NS8km/FORCING/GRID/nordsjoen_8km_grid_hmax20m_v3.nc"
+        romsgridpath = "/work/users/trondk/NS8km/FORCING/GRID/nordsjoen_8km_grid_hmax20m_v3.nc"
 
     if outgrid == "KINO":
         romsgridpath = "/work/users/trondk/KINO/GRID/kino_1600m_07082015_vf20.nc"
@@ -231,9 +231,9 @@ def main():
 
     # DETAILS -----------------------------------------------------------------------------------
     # Define the period to create forcing for
-    start_year  = 2010
-    end_year    = 2012
-    start_month = 1
+    start_year  = 2012
+    end_year    = 2013
+    start_month = 11
     end_month   = 12
     start_day   = 15
     end_day     = 15
