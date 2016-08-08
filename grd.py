@@ -268,6 +268,15 @@ class grdClass:
                 self.theta_b=self.cdf.variables['theta_b'][:]
                 self.Tcline=self.cdf.variables['Tcline'][:]
                 self.hc=self.cdf.variables['hc'][:]
+            elif (self.type=='AA10KM'):
+                self.vstretching=4
+                self.vtransform=2
+               
+                self.Nlevels=40
+                self.theta_s=7.0
+                self.theta_b=2.0
+                self.Tcline=250.0
+                self.hc = 250
             else:
                 self.vstretching=4
                 self.vtransform=2

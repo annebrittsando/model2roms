@@ -11,7 +11,7 @@ import atmosForcing
 __author__ = 'Trond Kristiansen'
 __email__ = 'trond.kristiansen@imr.no'
 __created__ = datetime(2009, 1, 30)
-__modified__ = datetime(2015, 8, 7)
+__modified__ = datetime(2016, 4, 21)
 __version__ = "1.5"
 __status__ = "Development"
 
@@ -52,6 +52,13 @@ def defineSubsetForIndata():
         minLon = -40
         maxLon = 40
 
+    if gridtype == "AA10KM":
+        abbreviation = "AA10KM"
+        minLat = -70
+        maxLat = 89.5
+        minLon = -179
+        maxLon = 180
+
     subset = np.zeros(4); subset[0] = minLat; subset[1] = maxLat; subset[2] = minLon; subset[3] = maxLon
     return subset
 
@@ -68,6 +75,9 @@ def defineAbbreviation(gridtype):
     if gridtype == "KINO":
         abbreviation = "kino"
       
+    if gridtype == "AA10KM":
+        abbreviation = "aa10km"
+
     return abbreviation
 
 def showInfo(myvars, romsgridpath, climName, initName, bryName, start_year, end_year, isClimatology, useESMF, myformat):
@@ -138,7 +148,7 @@ def main():
     # each time run
     decimateGridfile = False
         # Write ice values to file (for Arctic regions)
-    writeIce = False
+    writeIce = True
     # Use ESMF for the interpolation. This requires that you have ESMF and ESMPy installed (import ESMF)
     useESMF = True
     # Apply filter to smooth the 2D fields after interpolation (time consuming)
@@ -147,7 +157,7 @@ def main():
     # Using NETCDF4 automatically turns on compression of files (ZLIB)
     myformat='NETCDF4'
     # Frequency of the input data: usually monthly 
-    timeFrequencyOfInputData = "day" #, "month", "hour"
+    timeFrequencyOfInputData = "month" #, "month", "hour"
 
     # Subset input data. If you have global data you may want to seubset these to speed up reading. Make 
     # sure that your input data are cartesian (0-360 or -180:180, -90:90)
@@ -169,6 +179,7 @@ def main():
     outgrid  = "NS8KM"
     #outgrid = "REGSCEN"
     #outgrid = "KINO"
+#    outgrid= "AA10KM"
 
     # Define what grid type you wnat to interpolate from: Can be Z for SIGMA for ROMS
     # vertical coordinate system or ZLEVEL
@@ -201,8 +212,8 @@ def main():
         modelpath = "/Users/trondkr/Projects/is4dvar/grid2lonlat/RESULTS/"
     
     if indatatype == 'NS8KMZ':
-        modelpath = "/Users/trondkr/Dropbox/deliveryFOFINAL/"
-        modelpath = "/work/shared/imr/NS8KM/deliveryFO/FINAL/"
+        modelpath = "/Users/trondkr/Projects/NOWMAPS/delivery-COPERNICUS/"
+        #modelpath = "/work/shared/imr/NS8KM/Z-LEVEL-ASSIMILATION2010-2013/"
 
     if indatatype == 'WOAMONTHLY':
         modelpath = "/Users/trondkr/Projects/is4dvar/createSSS/"
@@ -212,10 +223,10 @@ def main():
     # Define the path to the grid file 
     if outgrid == "NS8KM":
         romsgridpath = "/Users/trondkr/Projects/is4dvar/Grid/nordsjoen_8km_smoothed02022015.nc"
-        romsgridpath = "/work/users/trondk/NS8km/FORCING/GRID/nordsjoen_8km_grid_hmax20m_v3.nc"
+        romsgridpath = "/work/shared/imr/NS8KM/FORCING/GRID/nordsjoen_8km_grid_hmax20m_v4.nc"
 
     if outgrid == "KINO":
-        romsgridpath = "/work/users/trondk/KINO/GRID/kino_1600m_07082015_vf20.nc"
+        romsgridpath = "/work/users/trondk/KINO/GRID/kino_1600m_19022016_vf20.nc"
         #romsgridpath = "/Users/trondkr/Projects/KINO/GRID/kino_1600m_07082015_vf20.nc"
 
     if outgrid == "REGSCEN":
@@ -226,13 +237,17 @@ def main():
     if outgrid == "GREENLAND":
         romsgridpath="/Users/trondkr/Projects/RegScen/Grid/Sermilik_grid_4000m.nc"
         romsgridpath="/Users/trondkr/Projects/RegScen/model2roms/polarlowr_grid.nc"
+
+    if outgrid=="AA10KM":
+        romsgridpath="/work-common/shared/imr/AA10KM/GRID/AA_10km_grid.nc"
+
     if indatatype == 'WOAMONTHLY': isClimatology = True
     else: isClimatology = False
 
     # DETAILS -----------------------------------------------------------------------------------
     # Define the period to create forcing for
-    start_year  = 2012
-    end_year    = 2013
+    start_year  = 2013
+    end_year    = 2014
     start_month = 11
     end_month   = 12
     start_day   = 15

@@ -320,7 +320,7 @@ def getGLORYSfilename(year, month, day, myvar, dataPath):
         myvarPrefix = 'icemod'
         myvar = "ice"
     elif (myvar in ['sossheig']):
-        if (year >= 2010 and month == 12) or ( year >= 2011 ):
+        if (year == 2010 and month == 12) or ( 2014 > year >= 2011 ):
             myvarPrefix = 'SSH'
         else:
             myvarPrefix = 'grid2D'
@@ -339,9 +339,11 @@ def getGLORYSfilename(year, month, day, myvar, dataPath):
 
     # GLORYS change the name in the middle of the time-series (on December 2010) and we have to
     # account for that
-    if (2013 > year >= 2010 and month == 12) or ( 2013 > year >= 2011 ):
+    if (year == 2014):
+        production = "R20151218"
+    elif (2013 > year >= 2010 and month == 12) or ( 2013 > year >= 2011 ):
         production = "R20140520"
-    elif (year >= 2013):
+    elif (year == 2013):
         production = "R20141205"
     else:
         production = "R20130808"
@@ -387,8 +389,8 @@ def getNS8KMfilename(year, month, day, myvar, dataPath):
 
 def getNS8KMZfilename(year, month, day, myvar, dataPath):
 
-    allInOneFile = '/work/users/trondk/KINO/FORCING/1600M/northsea_8km_z_06122009_22122012.nc'
-    #allInOneFile = '/Users/trondkr/Projects/KINO/northsea_8km_z_MyOceanFO_2009_2012_subset.nc'
+    #allInOneFile = '/work/users/trondk/KINO/FORCING/1600M/northsea_8km_z_mean.nc_2010-2013.nc'
+    allInOneFile = ''
 
     if os.path.exists(allInOneFile):
         readFromOneFile = True
@@ -400,7 +402,8 @@ def getNS8KMZfilename(year, month, day, myvar, dataPath):
             mymonth='0%s'%(month)
         else:
             mymonth='%s'%(month)
-        filename = dataPath + str(year)+str(mymonth)+'15_mm-IMR-MODEL-ROMS-NWS-20150822-fv04.1.nc'
+        filename = dataPath + str(year)+str(mymonth)+'15_mm-IMR-MODEL-ROMS-NWS-20160203-fv02.1.nc'
+
         return filename, readFromOneFile
 
 def getSODAMONTHLYfilename(year, month, day, myvar, dataPath):
@@ -820,7 +823,7 @@ def convertMODEL2ROMS(years, startdate, enddate, timeFrequencyOfInputData, climN
         fileNameIn = getNS8KMfilename(startdate.year, startdate.month, startdate.day, "S", dataPath)
     if indatatype == 'NS8KMZ':
         fileNameIn, readFromOneFile = getNS8KMZfilename(startdate.year, startdate.month, startdate.day, "S", dataPath)
-     
+        print fileNameIn
     # First time in loop, get the essential old grid information
     # MODEL data already at Z-levels. No need to interpolate to fixed depths,
     # but we use the one we have

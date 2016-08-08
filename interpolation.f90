@@ -287,7 +287,7 @@ Module interpolation
                 do ic=1,II
                     
                     urot(kc,jc,ic)=u_rho(kc,jc,ic)*COS(angle(jc,ic)) + v_rho(kc,jc,ic)*SIN(angle(jc,ic))
-                    vrot(kc,jc,ic)=-u_rho(kc,jc,ic)*SIN(angle(jc,ic)) + v_rho(kc,jc,ic)*COS(angle(jc,ic))
+                    vrot(kc,jc,ic)=u_rho(kc,jc,ic)*SIN(angle(jc,ic)) - v_rho(kc,jc,ic)*COS(angle(jc,ic))
                     
                     !print*, vrot(kc,jc,ic), urot(kc,jc,ic), kc,jc,ic !, sin(angle(jc,ic)), cos(angle(jc,ic))
                     !print*, v_rho(kc,jc,ic), u_rho(kc,jc,ic), ic,jc
