@@ -19,7 +19,7 @@ except ImportError:
 __author__   = 'Trond Kristiansen'
 __email__    = 'trond.kristiansen@imr.no'
 __created__  = datetime(2008, 12, 9)
-__modified__ = datetime(2015, 4, 8)
+__modified__ = datetime(2016, 9,9 )
 __version__  = "1.5"
 __status__   = "Development"
 
