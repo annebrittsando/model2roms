@@ -278,14 +278,15 @@ class grdClass:
                 self.Tcline=250.0
                 self.hc = 250
             else:
-                self.vstretching=4
-                self.vtransform=2
+                print "USING DEFAULT STRETCHING"
+                self.vstretching=1
+                self.vtransform=1
                
-                self.Nlevels=40
-                self.theta_s=7.0
-                self.theta_b=0.1
-                self.Tcline=250.0
-                self.hc = 250
+                self.Nlevels=35
+                self.theta_s=5.0
+                self.theta_b=0.4
+                self.Tcline=20.0
+                self.hc = 20
 
             self.vars=[]
             self.lonName='lon_rho'
